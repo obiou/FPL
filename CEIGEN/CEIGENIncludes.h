@@ -1,0 +1,13 @@
+#ifndef CEIGEN_INCLUDES
+#define CEIGEN_INCLUDES
+
+#define CEIGEN_HAS_OPENCV 1
+
+
+
+
+
+
+#endif // CEIGEN_INCLUDES
+
+

@@ -1,0 +1,12 @@
+#ifndef CTRACK_INCLUDES
+#define CTRACK_INCLUDES
+
+#define CTRACK_HAS_OPENCV 1
+
+
+
+
+
+#endif // CTRACK_INCLUDES
+
+

@@ -1,0 +1,9 @@
+TODO:
+- add full-frame initialisation (for demo)
+- add m-estimators
+- improve number of iterations per level/per transform type
+- add stopping criteria based on time
+- clean up tracking update main 'loop'
+- improve Homography abstraction
+- add Blas homography layer
+

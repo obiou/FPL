@@ -1,0 +1,31 @@
+GETTING STARTED:
+
+The following code in Matlab should show a simple example of tracking on the Mandrill image:
+SETTINGS % Setup paths
+MinSSDSL3Motion % Minimise the inter-image homography
+
+CODE ORGANISATION:
+
+The code is organised through three levels of calls:
+- Updates: this directory contains the lowest level code that given an estimate computes an gradient-based update.
+- MinSSD*: these functions compute a full minimisation between two templates from two images IRef and ICur. Iternally these functions call the Updates.
+- SSDTracking: this function tracks a template throughout a sequence
+- SSDInterFrameTracking: computes the transform between two frames. This can be used to initialise the tracking in a visual SLAM framework.
+
+Several parameters can be computed for the tracking:
+homography, blur (either independent from the motion or linked through a blur "magnitude/shutter speed %" parameter), affine illumination model.
+
+Other directories and functions:
+Warpings: contains
+  - blur_warping: warps and blurs a template, the Jacobian is optionally computed
+  - warping: warps using SL(3)
+Jacobians: computes the different Jacobians, in particular:
+  - Jhomography: homography for elements of SL(3), takes image gradients as input
+  - Jillumination: Jacobian for the affine illumination model
+
+NOTES:
+When creating the simulation images for blurring, two warps are required which add sampling errors. For this reason, using the optimal values does not return RMS=0.
+
+TODO:
+Add robust m-estimators to all functions.
+Add masks to all functions.

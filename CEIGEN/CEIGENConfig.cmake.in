@@ -1,0 +1,12 @@
+################################################################################
+# CEIGEN source dir
+set( CEIGEN_SOURCE_DIR "@CMAKE_CURRENT_SOURCE_DIR@")
+
+################################################################################
+# CEIGEN build dir
+set( CEIGEN_DIR "@CMAKE_CURRENT_BINARY_DIR@")
+
+################################################################################
+set( CEIGEN_INCLUDE_DIR  "@CEIGEN_INCLUDE_DIR@" )
+set( CEIGEN_LIBRARIES    "@CEIGEN_LIBRARIES@"   )
+

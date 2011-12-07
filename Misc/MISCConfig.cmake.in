@@ -1,0 +1,15 @@
+################################################################################
+# MISC source dir
+SET( MISC_SOURCE_DIR "@CMAKE_CURRENT_SOURCE_DIR@")
+
+################################################################################
+# MISC build dir
+SET( MISC_DIR "@CMAKE_CURRENT_BINARY_DIR@")
+
+################################################################################
+# MISC_LIBRARIES holds the list of libraries we use 
+SET( MISC_INCLUDE_DIR  "@MISC_INCLUDE_DIR@" )
+SET( MISC_LIBRARIES  "@MISC_LIBRARIES@" )
+SET( MISC_DEFINITIONS  "@MISC_DEFINITIONS@" )
+
+
