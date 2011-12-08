@@ -16,7 +16,7 @@ void genSin( vector<pair<double,double> >& v, const int nNumPoints,
              const int nOffset ) {             
     for( double ii=0; ii<nNumPoints; ii++ ) {
         double dVal = nImageWidth*ii/nNumPoints;
-        v[ii] = pair<double,double>( dVal, sin(4*3.1459*(dVal+nOffset)/nImageWidth)*nImageHeight/10+nImageHeight/2 );
+        v[ii] = pair<double,double>( dVal, sin(CVarUtils::GetCVar<double>( "wlength" )*2.*3.1459*(dVal+nOffset)/nImageWidth)*nImageHeight/10+nImageHeight/2 );
     }
 }
  
@@ -38,6 +38,7 @@ int main( int argc, char** argv )
     CVarUtils::CreateCVar( "vars.myvar2", 10. );
     CVarUtils::CreateCVar( "vars.var1.myvar1", 1);
     CVarUtils::CreateCVar( "vars.var1.myvar2", 10. );
+    CVarUtils::CreateCVar( "wlength", 4., "Wavelength" );
 #endif
 
     IplImage* pImage = NULL;
@@ -52,7 +53,7 @@ int main( int argc, char** argv )
 
     COPENCV::Figure fig( "Image" );
     int nKey = 0;
-    while( nKey != 0x1B ) {
+    while( (char)nKey != 0x1B ) {
         nOffset = (nOffset+1) %pImage->width;
         genSin( v, nNumPoints, pImage->width, pImage->height, nOffset++ );
         fig.imshow( pImage );
