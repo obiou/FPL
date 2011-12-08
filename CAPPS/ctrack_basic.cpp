@@ -308,12 +308,7 @@ bool Tracking( CCameraSensor::CameraSensor& cameraSensor ) {
     IplImage* pCurPatch = cvCreateImageHeader( cvGetSize( pRefPatch ), IPL_DEPTH_8U, 1 );
     cvSetData( pCurPatch, trackingSettings.GetTrackBuffer()->CurPatch(), pRefPatch->widthStep );
 
-    bool bIsClosed = true;
     std::vector<std::pair<double,double> > vWarpedBox;
-    CvPoint pPts[4];
-    CvPoint* ppPts[1]; // draw the bounding box
-    ppPts[0] = &(pPts[0]);
-    int nPts = 4;
 
     //bool bInit = true;
 

@@ -62,8 +62,12 @@ endif( "${CMAKE_BUILD_TYPE}" STREQUAL "Fast" )
 ################################################################################
 include_directories( ${CAPPS_INCLUDE_DIR} )
 
-################################################################################
-foreach( EXECUTABLE ${EXECUTABLES} )
-  add_executable( ${EXECUTABLE} ${EXECUTABLE}.cpp )
-  target_link_libraries( ${EXECUTABLE} ${CAPPS_LIBRARIES} )
-endforeach( EXECUTABLE )
+OPTION( BUILD_CAPPS "Build app demos using the FPL library." ON )
+
+IF( BUILD_CAPPS )
+    foreach( EXECUTABLE ${EXECUTABLES} )
+        add_executable( ${EXECUTABLE} ${EXECUTABLE}.cpp )
+        add_dependencies( ${EXECUTABLE} ${CAPPS_LIBRARIES} )
+        target_link_libraries( ${EXECUTABLE} ${CAPPS_LIBRARIES} )
+    endforeach( EXECUTABLE )
+ENDIF( BUILD_CAPPS )

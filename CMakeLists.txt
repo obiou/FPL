@@ -29,6 +29,7 @@ if( BUILD_ALL_DEMOS )
     set( BUILD_CAMERA_SENSOR_DEMOS ON CACHE BOOL "" FORCE )
     set( BUILD_COPENCV_DEMOS ON CACHE BOOL "" FORCE )
     set( BUILD_MISC_DEMOS ON CACHE BOOL "" FORCE )
+    set( BUILD_CAPPS ON CACHE BOOL "" FORCE )
 else()
     set( BUILD_CTRACK_DEMOS OFF CACHE BOOL "" FORCE )
     set( BUILD_CEIGEN_DEMOS OFF CACHE BOOL "" FORCE )
@@ -37,14 +38,20 @@ else()
     set( BUILD_CAMERA_SENSOR_DEMOS OFF CACHE BOOL "" FORCE )
     set( BUILD_COPENCV_DEMOS OFF CACHE BOOL "" FORCE )
     set( BUILD_MISC_DEMOS OFF CACHE BOOL "" FORCE )
+    set( BUILD_CAPPS OFF CACHE BOOL "" FORCE )
 endif()
 
 ################################################################################
+if( NOT CMAKE_BUILD_TYPE )
+  set( CMAKE_BUILD_TYPE Debug CACHE STRING "CMAKE_BUILD_TYPE" FORCE )
+endif( NOT CMAKE_BUILD_TYPE )
+
+################################################################################
 # Order is important...
-add_subdirectory( CTrack )
 add_subdirectory( Misc )
 
 add_subdirectory( COpenCV )
+add_subdirectory( CTrack )
 add_subdirectory( CEIGEN )
 add_subdirectory( CGEOM )
 add_subdirectory( CCameraModel )
