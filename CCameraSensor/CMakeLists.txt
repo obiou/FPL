@@ -26,7 +26,7 @@ find_package_and_add( MISC CCAMERASENSOR )
 
 ################################################################################
 # Get UEye
-FIND_PACKAGE( UEye )
+FIND_PACKAGE( UEYE  QUIET)
 IF( UEYE_FOUND )
   MESSAGE( STATUS "Found UEye, adding support." )
   SET( CCAMERASENSOR_LIBRARIES ${CCAMERASENSOR_LIBRARIES} ${UEYE_LIBRARIES} )
@@ -40,8 +40,6 @@ ELSE( UEYE_FOUND )
 ENDIF( UEYE_FOUND )
 
 ################################################################################
-MESSAGE( STATUS "BUILD_TYPE: " ${CMAKE_BUILD_TYPE} )
-
 IF( NOT CMAKE_BUILD_TYPE )
   SET( CMAKE_BUILD_TYPE Release CACHE STRING "CMAKE_BUILD_TYPE" FORCE )
 ENDIF( NOT CMAKE_BUILD_TYPE )

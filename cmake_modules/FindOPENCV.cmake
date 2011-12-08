@@ -229,9 +229,6 @@ SET(OPENCV_LIBRARIES   ${OpenCV_LIBRARIES} )
 SET(OPENCV_INCLUDE_DIR ${OpenCV_INCLUDE_DIRS} )
 SET(OPENCV_FOUND       ${OpenCV_FOUND})
 
-message( STATUS "OpenCV_DIR: " ${OpenCV_ROOT_DIR} )
-
-
 # display help message
 IF( NOT OPENCV_FOUND )
   # make FIND_PACKAGE friendly

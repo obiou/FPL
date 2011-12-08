@@ -38,8 +38,6 @@ find_package_and_add( CCAMERASENSOR CAPPS )
 find_package_and_add( CTRACK CAPPS )
 
 ################################################################################
-MESSAGE( STATUS "BUILD_TYPE: " ${CMAKE_BUILD_TYPE} )
-
 if( NOT CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE Release CACHE STRING "CMAKE_BUILD_TYPE" FORCE )
 endif( NOT CMAKE_BUILD_TYPE )
