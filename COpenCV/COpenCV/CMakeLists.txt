@@ -8,7 +8,5 @@ SET( HDRS
     )
 
 ##############################################################################
-#ADD_LIBRARY( cfigs ${SRCS} ${HDRS} )
-#INSTALL( TARGETS cfigs ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib )
 INSTALL( FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/COpenCV )
 

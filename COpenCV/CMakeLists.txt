@@ -58,6 +58,7 @@ set( LIB_HDRS
   COpenCV/copencv_basics.h
 )
 add_library( copencv SHARED ${LIB_SRCS} ${LIB_HDRS} )
+target_link_libraries( copencv  ${OPENCV_LIBRARIES}  )
 get_target_property( COPENCV_LIBRARY copencv LOCATION )
 set( COPENCV_LIBRARIES ${COPENCV_LIBRARIES} ${COPENCV_LIBRARY} )
 
