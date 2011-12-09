@@ -73,7 +73,7 @@ inline void undistort_div( const double dLambda, ///< Input: distortion paramete
 ////////////////////////////////////////////////////////////////////////////////
 /// Undistort using the division model
 inline void undistort_div( const double dLambda, ///< Input: distortion parameter (0: no distortion) 
-                           const Eigen::MatrixXd mDX, ///< Input: x pixel value of distorted pixel (obtained from the image)
+                           const Eigen::MatrixXd& mDX, ///< Input: x pixel value of distorted pixel (obtained from the image)
                            Eigen::MatrixXd& mUX ///< Output: x pixel value of distorted pixel (standard projective geometry is valid on these values)
                            ) {
     assert( mDX.cols() == mUX.cols() );
