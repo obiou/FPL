@@ -14,12 +14,12 @@ SET( HDRS
   )
 
 ##############################################################################
-SET( CGEOM_LIBRARIES ${CGEOM_LIBRARIES} ${CGEOM_LIBRARY} PARENT_SCOPE )
+add_library( cgeom  SHARED ${SRCS}  )
+target_link_libraries( cgeom  ${CGEOM_LIBRARIES}  )
 
 ##############################################################################
-add_library( cgeom  SHARED ${SRCS}  )
-target_link_libraries( cgeom  ${OPENCV_LIBRARIES}  )
 get_target_property( CGEOM_LIBRARY cgeom LOCATION )
+SET( CGEOM_LIBRARIES ${CGEOM_LIBRARIES} ${CGEOM_LIBRARY} PARENT_SCOPE )
 
 ##############################################################################
 #INSTALL( TARGETS cgeom ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib )

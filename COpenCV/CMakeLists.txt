@@ -21,6 +21,8 @@ SET( COPENCV_INCLUDE_DIR ${COPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR} )
 ################################################################################
 FIND_PACKAGE( CVARS )
 
+MESSAGE( STATUS "CVARS: " ${CVARS_LIBRARIES} )
+
 if( CVARS_FOUND )
     SET( COPENCV_LIBRARIES ${COPENCV_LIBRARIES} ${CVARS_LIBRARIES} )
     SET( COPENCV_INCLUDE_DIR ${COPENCV_INCLUDE_DIR} ${CVARS_INCLUDE_DIR} )
@@ -58,7 +60,7 @@ set( LIB_HDRS
   COpenCV/copencv_basics.h
 )
 add_library( copencv SHARED ${LIB_SRCS} ${LIB_HDRS} )
-target_link_libraries( copencv  ${OPENCV_LIBRARIES}  )
+target_link_libraries( copencv  ${COPENCV_LIBRARIES}  )
 get_target_property( COPENCV_LIBRARY copencv LOCATION )
 set( COPENCV_LIBRARIES ${COPENCV_LIBRARIES} ${COPENCV_LIBRARY} )
 

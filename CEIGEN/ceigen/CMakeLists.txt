@@ -21,9 +21,13 @@ SET( HDRS
     ceigen_vision.h
   )
 
+
 ##############################################################################
 #ADD_LIBRARY( ceigen ${SRCS} )
 ADD_LIBRARY( ceigen SHARED ${SRCS} )
+target_link_libraries( ceigen ${CEIGEN_LIBRARIES}  )
+
+##############################################################################
 GET_TARGET_PROPERTY( CEIGEN_LIBRARY ceigen LOCATION )
 SET( CEIGEN_LIBRARIES ${CEIGEN_LIBRARIES} ${CEIGEN_LIBRARY} PARENT_SCOPE )
 

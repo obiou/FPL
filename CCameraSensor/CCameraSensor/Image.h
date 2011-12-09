@@ -81,7 +81,11 @@
 #  define GL_RGBA                                 0x1908
 #else
 // If this include fails, set DOES_NOT_HAVE_GL
-#  include <GL/gl.h>
+#  if __APPLE__
+#     include <OpenGL/gl.h>
+#   else
+#     include <GL/gl.h>
+#  endif
 #endif
 
 namespace CCameraImage {

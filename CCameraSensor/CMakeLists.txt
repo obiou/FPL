@@ -70,8 +70,6 @@ set( LIB_SRCS
   CCameraSensor/FileReaderFromList.cpp
   CCameraSensor/Image.cpp
   CCameraSensor/OpenCVCamera.cpp
-  CCameraSensor/UEyeBlockingCamera.cpp
-  CCameraSensor/UEyeCamera.cpp
 )
 set( LIB_HDRS
   CCameraSensor/CameraSensor.h
@@ -79,10 +77,19 @@ set( LIB_HDRS
   CCameraSensor/FileReaderFromList.h
   CCameraSensor/Image.h
   CCameraSensor/OpenCVCamera.h
-  CCameraSensor/UEyeBlockingCamera.h
-  CCameraSensor/UEyeCamera.h
 )
+if( UEYE_FOUND )
+    set( LIB_SRCS ${LIB_SRCS} 
+        CCameraSensor/UEyeBlockingCamera.cpp
+        CCameraSensor/UEyeCamera.cpp
+        )
+    set( LIB_HDRS ${LIB_HDRS}
+        CCameraSensor/UEyeBlockingCamera.h
+        CCameraSensor/UEyeCamera.h
+        )
+endif()
 add_library( ccamerasensor SHARED ${LIB_SRCS} ${LIB_HDRS} )
+target_link_libraries( ccamerasensor ${CCAMERASENSOR_LIBRARIES} )
 get_target_property( CCAMERASENSOR_LIBRARY ccamerasensor LOCATION )
 set( CCAMERASENSOR_LIBRARIES ${CCAMERASENSOR_LIBRARIES} ${CCAMERASENSOR_LIBRARY} )
 
