@@ -48,8 +48,6 @@ if( BUILD_CEIGEN_DEMOS )
 endif( BUILD_CEIGEN_DEMOS )
 
 ################################################################################
-MESSAGE( STATUS "BUILD_TYPE: " ${CMAKE_BUILD_TYPE} )
-
 if( NOT CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE Release CACHE STRING "CMAKE_BUILD_TYPE" FORCE )
 endif( NOT CMAKE_BUILD_TYPE )

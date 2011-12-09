@@ -399,7 +399,7 @@ namespace CCameraModel {
                 
                     double dErr = ( mP2DEst.col( nIndex ) - mP2D.col( nIndex ) ).norm();
                     if( nIndex > 0 ) {
-                        if( isnan( dErr ) ) {
+                        if( std::isnan( dErr ) ) {
                             mP3D.col( nIndex ) =  mP3D.col( nIndex-1 );
                         }
                     }

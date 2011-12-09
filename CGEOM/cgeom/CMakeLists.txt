@@ -14,9 +14,11 @@ SET( HDRS
   )
 
 ##############################################################################
-ADD_LIBRARY( cgeom SHARED ${SRCS} )
+add_library( cgeom  SHARED ${SRCS}  )
+target_link_libraries( cgeom  ${CGEOM_LIBRARIES}  )
 
-GET_TARGET_PROPERTY( CGEOM_LIBRARY cgeom LOCATION )
+##############################################################################
+get_target_property( CGEOM_LIBRARY cgeom LOCATION )
 SET( CGEOM_LIBRARIES ${CGEOM_LIBRARIES} ${CGEOM_LIBRARY} PARENT_SCOPE )
 
 ##############################################################################

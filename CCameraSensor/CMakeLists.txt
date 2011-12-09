@@ -26,7 +26,7 @@ find_package_and_add( MISC CCAMERASENSOR )
 
 ################################################################################
 # Get UEye
-FIND_PACKAGE( UEye )
+FIND_PACKAGE( UEYE  QUIET)
 IF( UEYE_FOUND )
   MESSAGE( STATUS "Found UEye, adding support." )
   SET( CCAMERASENSOR_LIBRARIES ${CCAMERASENSOR_LIBRARIES} ${UEYE_LIBRARIES} )
@@ -40,8 +40,6 @@ ELSE( UEYE_FOUND )
 ENDIF( UEYE_FOUND )
 
 ################################################################################
-MESSAGE( STATUS "BUILD_TYPE: " ${CMAKE_BUILD_TYPE} )
-
 IF( NOT CMAKE_BUILD_TYPE )
   SET( CMAKE_BUILD_TYPE Release CACHE STRING "CMAKE_BUILD_TYPE" FORCE )
 ENDIF( NOT CMAKE_BUILD_TYPE )
@@ -72,8 +70,6 @@ set( LIB_SRCS
   CCameraSensor/FileReaderFromList.cpp
   CCameraSensor/Image.cpp
   CCameraSensor/OpenCVCamera.cpp
-  CCameraSensor/UEyeBlockingCamera.cpp
-  CCameraSensor/UEyeCamera.cpp
 )
 set( LIB_HDRS
   CCameraSensor/CameraSensor.h
@@ -81,10 +77,19 @@ set( LIB_HDRS
   CCameraSensor/FileReaderFromList.h
   CCameraSensor/Image.h
   CCameraSensor/OpenCVCamera.h
-  CCameraSensor/UEyeBlockingCamera.h
-  CCameraSensor/UEyeCamera.h
 )
+if( UEYE_FOUND )
+    set( LIB_SRCS ${LIB_SRCS} 
+        CCameraSensor/UEyeBlockingCamera.cpp
+        CCameraSensor/UEyeCamera.cpp
+        )
+    set( LIB_HDRS ${LIB_HDRS}
+        CCameraSensor/UEyeBlockingCamera.h
+        CCameraSensor/UEyeCamera.h
+        )
+endif()
 add_library( ccamerasensor SHARED ${LIB_SRCS} ${LIB_HDRS} )
+target_link_libraries( ccamerasensor ${CCAMERASENSOR_LIBRARIES} )
 get_target_property( CCAMERASENSOR_LIBRARY ccamerasensor LOCATION )
 set( CCAMERASENSOR_LIBRARIES ${CCAMERASENSOR_LIBRARIES} ${CCAMERASENSOR_LIBRARY} )
 

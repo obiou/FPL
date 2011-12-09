@@ -15,7 +15,7 @@ SET( EXECUTABLES
 )
 
 ################################################################################
-option( BUILD_CAMERA_LOGGER "Build camera logger - depends on c++0x." ON )
+option( BUILD_CAMERA_LOGGER "Build camera logger - depends on c++0x." OFF )
 if( BUILD_CAMERA_LOGGER )
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x " )
     set( EXECUTABLES ${EXECUTABLES} ccamera_logger )

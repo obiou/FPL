@@ -20,10 +20,11 @@ SET( HDRS
 
 ##############################################################################
 ADD_LIBRARY( ccameramodel SHARED ${SRCS} ${HDRS} )
+target_link_libraries( ccameramodel ${CCAMERAMODEL_LIBRARIES} )
 
+##############################################################################
 GET_TARGET_PROPERTY( CCAMERAMODEL_LIBRARY ccameramodel LOCATION )
 SET( CCAMERAMODEL_LIBRARIES ${CCAMERAMODEL_LIBRARIES} ${CCAMERAMODEL_LIBRARY} PARENT_SCOPE )
-message( STATUS "CCAMERAMODEL_LIBRARIES: " ${CCAMERAMODEL_LIBRARIES} )
 
 ##############################################################################
 #INSTALL( TARGETS ccameramodel ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib )

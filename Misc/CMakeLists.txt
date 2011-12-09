@@ -22,8 +22,6 @@ IF( BUILD_MISC_DEMOS )
 ENDIF( BUILD_MISC_DEMOS )
 
 ################################################################################
-MESSAGE( STATUS "BUILD_TYPE: " ${CMAKE_BUILD_TYPE} )
-
 IF( NOT CMAKE_BUILD_TYPE )
   SET( CMAKE_BUILD_TYPE Release CACHE STRING "CMAKE_BUILD_TYPE" FORCE )
 ENDIF( NOT CMAKE_BUILD_TYPE )

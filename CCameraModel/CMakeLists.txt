@@ -26,8 +26,6 @@ SET( CCAMERAMODEL_HAS_EIGEN3 "#define CCAMERAMODEL_HAS_EIGEN3 1" )
 find_package_and_add( CGEOM CCAMERAMODEL )
 
 ################################################################################
-MESSAGE( STATUS "BUILD_TYPE: " ${CMAKE_BUILD_TYPE} )
-
 IF( NOT CMAKE_BUILD_TYPE )
   SET( CMAKE_BUILD_TYPE Release CACHE STRING "CMAKE_BUILD_TYPE" FORCE )
 ENDIF( NOT CMAKE_BUILD_TYPE )
