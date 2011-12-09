@@ -162,7 +162,8 @@ namespace CCameraModel {
             const int nNumParams = 2*get_num_parameters();
             const int nNumPoseParams = 2*3;
             switch( m_Settings.to_ulong() ) {
-            case 0b11110000:
+                //case 0b11110000:
+            case 0xF0 :
                 for( size_t ii=0; ii<nNumPoints; ii++ ) {
                     CPROJECTIONS::project<T,0,0,0,0,COMPUTE_JAC_E,0,0>
                         ( m_dfx, m_dfy, m_dcx, m_dcy, m_dk1, m_dk2, m_dp1, m_dp2, 
@@ -172,7 +173,8 @@ namespace CCameraModel {
                           );
                 }
                 break;
-            case 0b11111000:
+                //case 0b11111000:
+            case 0xF8:
                 for( size_t ii=0; ii<nNumPoints; ii++ ) {
                     CPROJECTIONS::project<T,1,0,0,0,COMPUTE_JAC_E,COMPUTE_JAC_I,0>
                         ( m_dfx, m_dfy, m_dcx, m_dcy, m_dk1, m_dk2, m_dp1, m_dp2,
@@ -182,7 +184,8 @@ namespace CCameraModel {
                           );
                 }
                 break;
-            case 0b11111100:
+                //case 0b11111100:
+            case 0xFC:
                 for( size_t ii=0; ii<nNumPoints; ii++ ) {
                     CPROJECTIONS::project<T,1,1,0,0,COMPUTE_JAC_E,COMPUTE_JAC_I,0>
                         ( m_dfx, m_dfy, m_dcx, m_dcy, m_dk1, m_dk2, m_dp1, m_dp2,
@@ -191,7 +194,8 @@ namespace CCameraModel {
                           &pd2d3d[nNumPoseParams*ii], &pd2dParam[nNumParams*ii] );
                 }
                 break;
-            case 0b11111110:
+                //case 0b11111110:
+            case 0xFE:
                 for( size_t ii=0; ii<nNumPoints; ii++ ) {
                     CPROJECTIONS::project<T,1,1,1,0,COMPUTE_JAC_E,COMPUTE_JAC_I,0>
                         ( m_dfx, m_dfy, m_dcx, m_dcy, m_dk1, m_dk2, m_dp1, m_dp2,
@@ -200,7 +204,7 @@ namespace CCameraModel {
                           &pd2d3d[nNumPoseParams*ii], &pd2dParam[nNumParams*ii] );
                 }
                 break; 
-            case 0b11111111:
+            case 0xFF:
                 for( size_t ii=0; ii<nNumPoints; ii++ ) {
                     CPROJECTIONS::project<T,1,1,1,1,COMPUTE_JAC_E,COMPUTE_JAC_I,0>
                         ( m_dfx, m_dfy, m_dcx, m_dcy, m_dk1, m_dk2, m_dp1, m_dp2,
@@ -226,7 +230,8 @@ namespace CCameraModel {
             const int nNumParams = 2*get_num_parameters();
             const int nNumPoseParams = 6;
             switch( m_Settings.to_ulong() ) {
-            case 0b11110000:
+                //case 0b11110000:
+            case 0xF0:
                 for( size_t ii=0; ii<nNumPoints; ii++ ) {
                     CPROJECTIONS::project<T,0,0,0,0,COMPUTE_JAC_E,0,0>
                         ( m_dfx, m_dfy, m_dcx, m_dcy, m_dk1, m_dk2, m_dp1, m_dp2, 
@@ -236,7 +241,8 @@ namespace CCameraModel {
                           );
                 }
                 break;
-            case 0b11111000:
+                //case 0b11111000:
+            case 0xF8:
                 for( size_t ii=0; ii<nNumPoints; ii++ ) {
                     CPROJECTIONS::project<T,1,0,0,0,COMPUTE_JAC_E,COMPUTE_JAC_I,0>
                         ( m_dfx, m_dfy, m_dcx, m_dcy, m_dk1, m_dk2, m_dp1, m_dp2,
@@ -246,7 +252,8 @@ namespace CCameraModel {
                           );
                 }
                 break;
-            case 0b11111100:
+                //case 0b11111100:
+            case 0xFC:
                 for( size_t ii=0; ii<nNumPoints; ii++ ) {
                     CPROJECTIONS::project<T,1,1,0,0,COMPUTE_JAC_E,COMPUTE_JAC_I,0>
                         ( m_dfx, m_dfy, m_dcx, m_dcy, m_dk1, m_dk2, m_dp1, m_dp2,
@@ -256,7 +263,8 @@ namespace CCameraModel {
                           );
                 }
                 break;
-            case 0b11111110:
+                //case 0b11111110:
+            case 0xFE:
                 for( size_t ii=0; ii<nNumPoints; ii++ ) {
                     CPROJECTIONS::project<T,1,1,1,0,COMPUTE_JAC_E,COMPUTE_JAC_I,0>
                         ( m_dfx, m_dfy, m_dcx, m_dcy, m_dk1, m_dk2, m_dp1, m_dp2,
@@ -265,7 +273,7 @@ namespace CCameraModel {
                           &pd2d3d[ nNumPoseParams*ii ], &pd2dParam[ nNumParams*ii ] );
                 }
                 break; 
-            case 0b11111111:
+            case 0xFF:
                 for( size_t ii=0; ii<nNumPoints; ii++ ) {
                     CPROJECTIONS::project<T,1,1,1,1,COMPUTE_JAC_E,COMPUTE_JAC_I,0>
                         ( m_dfx, m_dfy, m_dcx, m_dcy, m_dk1, m_dk2, m_dp1, m_dp2,
