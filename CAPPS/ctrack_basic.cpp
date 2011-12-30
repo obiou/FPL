@@ -287,11 +287,11 @@ bool Tracking( CCameraSensor::CameraSensor& cameraSensor ) {
     int nNumLevels = 4;
     ImagePyramid refPatchPyramid;
     refPatchPyramid.BuildPyramid( nNumLevels,
-                                  (unsigned char*)pRefPatch->imageData,
+                                  reinterpret_cast<unsigned char*>( pRefPatch->imageData ),
                                   nPatchWidth, nPatchHeight, nPatchWidthStep ); 
     ImagePyramid curImagePyramid;
     curImagePyramid.BuildPyramid( nNumLevels,
-                                  (unsigned char*)pCurImage->imageData,
+                                  reinterpret_cast<unsigned char*>( pCurImage->imageData ),
                                   nImageWidth, nImageHeight, nImageWidthStep );
     TrackingStatsPyr trackingStatsPyr( nNumLevels );
     TrackingSettingsPyr<Tracker,NoMask> trackingSettings;
@@ -334,7 +334,7 @@ bool Tracking( CCameraSensor::CameraSensor& cameraSensor ) {
 
 #if !NO_PYR
         curImagePyramid.BuildPyramid( nNumLevels,
-                                      (unsigned char*)pCurImage->imageData,
+                                      reinterpret_cast<unsigned char*>( pCurImage->imageData ),
                                       nImageWidth, nImageHeight, nImageWidthStep );
 
         if( bDrawCurPyr ) { DrawPyramid( "Cur Level ", curImagePyramid ); }

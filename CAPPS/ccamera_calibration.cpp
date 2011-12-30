@@ -203,7 +203,7 @@ int main( int argc, char** argv )
                 // Comes after saving to avoid having grid drawn on the image
                 Eigen::MatrixXf mGridPointsF = mGridPoints.cast<float>();
                 cvDrawChessboardCorners( pImage, board_size, 
-                                         (CvPoint2D32f*)mGridPointsF.data(),
+                                         reinterpret_cast<CvPoint2D32f*>( mGridPointsF.data() ),
                                          mGridPointsF.cols(), bFound );
             }
             prev_timestamp = clock();
@@ -239,8 +239,8 @@ int main( int argc, char** argv )
             COPENCV::Figure fig_un( "Undistorted Image" );
             CameraModel* pCam = gridCalibrator.get_camera_copy();
             pCam->undistort_image( nImageWidth, nImageHeight, nImageWidthStep,
-                                   (const unsigned char*)pImage->imageData,
-                                   (unsigned char*)pImUndist->imageData, true );
+                                   reinterpret_cast<const unsigned char*>( pImage->imageData ),
+                                   reinterpret_cast<unsigned char*>( pImUndist->imageData ), true );
             fig_un.draw();
             fig_un.wait( 0 );
             delete pCam;
