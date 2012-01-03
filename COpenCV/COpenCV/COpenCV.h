@@ -9,6 +9,10 @@
 
 #include <COpenCV/copencv_basics.h>
 
+#if COPENCV_HAS_CIMAGE
+#  include <cimage.h>
+#endif
+
 #ifdef COPENCV_HAS_CVARS
 #  include <COpenCV/OpenCVConsole.h>
 #endif
@@ -558,6 +562,18 @@ namespace COPENCV {
             copy( pImage, m_pDrawingBuffer );            
         }
 
+        ////////////////////////////////////////////////////
+        void imshow( const cv::Mat& mImage ) { 
+            IplImage image = mImage;
+            imshow( &image );
+        }
+
+#if COPENCV_HAS_CIMAGE
+        ////////////////////////////////////////////////////
+        void imshow( const ImageWrapper::Image& mImage ) { 
+            imshow( mImage.mImage );
+        }
+#endif
         ////////////////////////////////////////////////////
         void imshow2( unsigned char* pImageData1,
                       const unsigned int nWidth1,

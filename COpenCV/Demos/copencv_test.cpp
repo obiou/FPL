@@ -1,6 +1,6 @@
 #include <CameraSensor.h>
 #include <COpenCV.h>
-#if HAS_CVARS
+#if COPENCV_HAS_CVARS
 #  include <CVars/CVar.h>
 #endif
 #include <Misc.h>

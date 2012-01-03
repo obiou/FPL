@@ -21,13 +21,20 @@ SET( COPENCV_INCLUDE_DIR ${COPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR} )
 ################################################################################
 FIND_PACKAGE( CVARS )
 
-MESSAGE( STATUS "CVARS: " ${CVARS_LIBRARIES} )
-
 if( CVARS_FOUND )
     SET( COPENCV_LIBRARIES ${COPENCV_LIBRARIES} ${CVARS_LIBRARIES} )
     SET( COPENCV_INCLUDE_DIR ${COPENCV_INCLUDE_DIR} ${CVARS_INCLUDE_DIR} )
     SET( COPENCV_HAS_CVARS "#define COPENCV_HAS_CVARS 1" )
 endif( CVARS_FOUND )
+
+################################################################################
+find_package( CIMAGE )
+if( CIMAGE_FOUND )
+    #message( STATUS "Found cimage" )
+    SET( COPENCV_LIBRARIES ${COPENCV_LIBRARIES} ${CIMAGE_LIBRARIES} )
+    SET( COPENCV_INCLUDE_DIR ${COPENCV_INCLUDE_DIR} ${CIMAGE_INCLUDE_DIR} )
+    set( COPENCV_HAS_CIMAGE "#define COPENCV_HAS_CIMAGE 1" )
+endif()
 
 ################################################################################
 IF( NOT CMAKE_BUILD_TYPE )

@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef CIMAGE_H
-#define CIMAGE_H
+#ifndef IMAGE_WRAPPER_H
+#define IMAGE_WRAPPER_H
 
 #include <cv.h>
 #include <highgui.h>
