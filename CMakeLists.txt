@@ -22,6 +22,7 @@ list( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
 OPTION( BUILD_ALL_DEMOS "Build demos for using CEIGEN." OFF )
 
 if( BUILD_ALL_DEMOS )
+    set( BUILD_CIMAGE_DEMOS ON CACHE BOOL "" FORCE )
     set( BUILD_CTRACK_DEMOS ON CACHE BOOL "" FORCE )
     set( BUILD_CEIGEN_DEMOS ON CACHE BOOL "" FORCE )
     set( BUILD_CGEOM_DEMOS ON CACHE BOOL "" FORCE )
@@ -31,6 +32,7 @@ if( BUILD_ALL_DEMOS )
     set( BUILD_MISC_DEMOS ON CACHE BOOL "" FORCE )
     set( BUILD_CAPPS ON CACHE BOOL "" FORCE )
 else()
+    set( BUILD_CIMAGE_DEMOS OFF CACHE BOOL "" FORCE )
     set( BUILD_CTRACK_DEMOS OFF CACHE BOOL "" FORCE )
     set( BUILD_CEIGEN_DEMOS OFF CACHE BOOL "" FORCE )
     set( BUILD_CGEOM_DEMOS OFF CACHE BOOL "" FORCE )
@@ -49,6 +51,7 @@ endif( NOT CMAKE_BUILD_TYPE )
 ################################################################################
 # Order is important...
 add_subdirectory( Misc )
+add_subdirectory( CIMAGE )
 
 add_subdirectory( COpenCV )
 add_subdirectory( CTrack )

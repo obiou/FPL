@@ -1,0 +1,12 @@
+################################################################################
+# CIMAGE source dir
+set( CIMAGE_SOURCE_DIR "@CMAKE_CURRENT_SOURCE_DIR@")
+
+################################################################################
+# CIMAGE build dir
+set( CIMAGE_DIR "@CMAKE_CURRENT_BINARY_DIR@")
+
+################################################################################
+set( CIMAGE_INCLUDE_DIR  "@CIMAGE_INCLUDE_DIR@" )
+set( CIMAGE_LIBRARIES    "@CIMAGE_LIBRARIES@"   )
+set( CIMAGE_DEFINITIONS  "@CIMAGE_DEFINITIONS@" )
