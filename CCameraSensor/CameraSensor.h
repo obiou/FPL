@@ -19,7 +19,6 @@
 
 // Only include header-only models
 #include <CCameraSensorIncludes.h>
-#include <CCameraSensor/Image.h>
 #include <CCameraSensor/CameraSensor.h>
 #include <CCameraSensor/FileReader.h>
 

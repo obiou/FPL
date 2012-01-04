@@ -27,7 +27,7 @@
 #include <Misc.h>
 
 using namespace CCameraSensor;
-using namespace CCameraImage;
+using namespace ImageWrapper;
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,12 +37,12 @@ int main()
     CameraSensor cameraSensor2( "UEye" );
 
     if( !cameraSensor1.open() ) {
-        cerr << "Problem opening camera sensor1." << endl;
+        cerr << "Problem opening camera sensor 1." << endl;
         return -1;
     }
 
     if( !cameraSensor2.open() ) {
-        cerr << "Problem opening camera sensor2." << endl;
+        cerr << "Problem opening camera sensor 2." << endl;
         return -1;
     }
 
@@ -50,15 +50,15 @@ int main()
 
     char nKey = 0;
     Image* pImage1 = cameraSensor1.read();
-    Image* pImage2 = cameraSensor1.read();
-    std::cout << "SensorID: " << pImage1->sensorID() << std::endl;
-    std::cout << "SensorID: " << pImage2->sensorID() << std::endl;
+    Image* pImage2 = cameraSensor2.read();
+    std::cout << "SensorID: " << pImage1->sSensorID << std::endl;
+    std::cout << "SensorID: " << pImage2->sSensorID << std::endl;
 
     bool bBlock = false;
 
     while( pImage1 != NULL && pImage2 != NULL && nKey != 32 ) {
-        IplImage aI1 = ToIplImage( pImage1 );
-        IplImage aI2 = ToIplImage( pImage2 );
+        IplImage aI1 = pImage1->mImage;
+        IplImage aI2 = pImage2->mImage;
 
         fig.imshow2( &aI1, &aI2 );
         fig.draw();

@@ -17,7 +17,7 @@
 #ifndef CCAMERA_SENSOR_INTERFACE_H
 #define CCAMERA_SENSOR_INTERFACE_H
 
-#include <CCameraSensor/Image.h>
+#include <cimage.h>
 #include <CCameraSensor/factory.h>
 
 #include <string>
@@ -40,7 +40,7 @@ namespace CCameraSensor {
         /// Initialises a particular driver, returns false if it fails
         virtual bool open() = 0;
         /// Read several images
-        virtual bool read( std::vector<CCameraImage::Image*>& vImages ) = 0;
+        virtual bool read( std::vector<ImageWrapper::Image*>& vImages ) = 0;
         virtual bool close() = 0;
 
         virtual std::string get( const std::string& sKey ) = 0;

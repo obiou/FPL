@@ -24,7 +24,7 @@
 #include <Misc.h>
 
 using namespace CCameraSensor;
-using namespace CCameraImage;
+using namespace ImageWrapper;
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,10 +43,10 @@ int main()
 
     char nKey = 0;
     Image* pImage = cameraSensor.read();
-    std::cout << "SensorID: " << pImage->sensorID() << std::endl;
+    std::cout << "SensorID: " << pImage->sSensorID << std::endl;
 
     while( pImage != NULL && nKey != 32 ) {
-        IplImage aI = ToIplImage( pImage );
+        IplImage aI = pImage->mImage;
         fig.imshow( &aI );
         fig.draw();
 

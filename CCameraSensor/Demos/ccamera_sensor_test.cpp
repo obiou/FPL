@@ -18,7 +18,7 @@
 #include <CameraSensor.h>
 
 using namespace CCameraSensor;
-using namespace CCameraImage;
+using namespace ImageWrapper;
 
 ////////////////////////////////////////////////////////////////////////////////
 int main()
@@ -32,12 +32,12 @@ int main()
     Image* pImage = cameraSensor.read();
     COPENCV::Figure fig( "UEyeImage", false );
     int nKey = 0;
-    while( pImage != NULL && nKey != 32 ) {
-        IplImage aI = ToIplImage( pImage );
+    while( pImage != NULL && (char)nKey != 'q' ) {
+        IplImage aI = pImage->mImage;
         fig.imshow( &aI );
         fig.draw();
 
-        nKey = fig.wait( 100 );
+        nKey = fig.wait();
         pImage = cameraSensor.read();
     }
     cameraSensor.close();   

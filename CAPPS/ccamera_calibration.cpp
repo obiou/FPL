@@ -131,16 +131,16 @@ int main( int argc, char** argv )
     // Create a vector of image points
     std::vector<Eigen::MatrixXd> vImagePoints;
 
-    CCameraImage::Image* pImageCapture = cameraSensor.read();
+    ImageWrapper::Image* pImageCapture = cameraSensor.read();
 
     if( pImageCapture == NULL ) {
         cerr << "ERROR: problem capturing image from sensor, quitting..." << endl;
         return -1;
     }
-    std::string sSensorID = pImageCapture->sensorID();
-    unsigned int nImageWidth = pImageCapture->width();
-    unsigned int nImageHeight = pImageCapture->height();
-    unsigned int nImageWidthStep = pImageCapture->widthStep();
+    std::string sSensorID = pImageCapture->sSensorID;
+    unsigned int nImageWidth = pImageCapture->mImage.cols;
+    unsigned int nImageHeight = pImageCapture->mImage.rows;
+    unsigned int nImageWidthStep = pImageCapture->mImage.step;
 
     IplImage* pImUndist = cvCreateImage( cvSize( nImageWidth, nImageHeight), IPL_DEPTH_8U, 1 );
 
@@ -163,7 +163,7 @@ int main( int argc, char** argv )
     double dRMS = 0;
     while( ( pImageCapture = cameraSensor.read() ) != NULL ) {
         //std::cout << "LastReadFile: " << cameraSensor.get( "LastReadFile" ) << std::endl;
-        IplImage aI = CCameraImage::ToIplImage( pImageCapture );
+        IplImage aI = pImageCapture->mImage;
         IplImage *pImage = &aI;
         bool bFound = false;
         CvPoint text_origin;
@@ -195,7 +195,7 @@ int main( int argc, char** argv )
                 if( bLive ) {
                     snprintf( sImageName, MAX_FILENAME, "view_%03d.png", nNumCapturedImages );
                     snprintf( sImageNameExtra, MAX_FILENAME, "view_%03d.txt", nNumCapturedImages );
-                    pImageCapture->save( sImageName, sImageNameExtra );
+                    ImageWrapper::imwrite( sImageName, sImageNameExtra, *pImageCapture );
                 }
                 nNumCapturedImages++;
             }

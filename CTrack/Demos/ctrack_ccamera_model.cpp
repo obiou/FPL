@@ -57,7 +57,7 @@
 using namespace std;
 using namespace CTrack;
 using namespace CCameraSensor;
-using namespace CCameraImage;
+using namespace ImageWrapper;
 
 typedef pair<int,int> Coords;
 typedef vector<Coords> VectorCoords;
@@ -124,7 +124,7 @@ bool GetBoxToTrack( CameraSensor& cameraSensor,
     Image* pImageCapture = cameraSensor.read();
     if( pImageCapture == NULL ) { return false; }
 
-    IplImage aI = ToIplImage( pImageCapture );
+    IplImage aI = pImageCapture->mImage;
     pImage = &aI;
 
     while( !bGotBox ) {
@@ -134,7 +134,7 @@ bool GetBoxToTrack( CameraSensor& cameraSensor,
 
         pImageCapture = cameraSensor.read();
         if( pImageCapture == NULL ) { return false; }
-        aI = ToIplImage( pImageCapture );
+        aI = pImageCapture->mImage;
         pImage = &aI;
 
         if( !bFirstPoint && !bGotBox ) { // Draw intermediate box
@@ -186,7 +186,7 @@ bool CropBoxToTrack( CameraSensor& cameraSensor,
 {
     Image* pImageCapture = cameraSensor.read();
     if( pImageCapture == NULL ) { return false; }
-    IplImage aI = ToIplImage( pImageCapture );
+    IplImage aI = pImageCapture->mImage;
     IplImage* pImage = &aI;
 
     int nWidth  = pImage->width;
@@ -234,11 +234,11 @@ int main( int argc, char** argv )
         return -1;
     }
 
-    std::string sSensorID = pImageCapture->sensorID();
+    std::string sSensorID = pImageCapture->sSensorID;
     std::cout << "SensorID: " << sSensorID << std::endl;
-    unsigned int nImageWidth = pImageCapture->width();
-    unsigned int nImageHeight = pImageCapture->height();
-    unsigned int nImageWidthStep = pImageCapture->widthStep();
+    unsigned int nImageWidth = pImageCapture->mImage.cols;
+    unsigned int nImageHeight = pImageCapture->mImage.rows;
+    unsigned int nImageWidthStep = pImageCapture->mImage.step;
 
     ////////////////////////////////////////////////////////
     IplImage* pRefImage = NULL;
@@ -391,7 +391,7 @@ int main( int argc, char** argv )
     ////////////////////////////////////////////////////////
     // Track
     while( ( pImageCapture = cameraSensor.read() ) != NULL ) {
-        IplImage aI = ToIplImage( pImageCapture );
+        IplImage aI = pImageCapture->mImage;
         pCapturedImage = &aI;
             
         if( pCapturedImage->depth != 8 ) {

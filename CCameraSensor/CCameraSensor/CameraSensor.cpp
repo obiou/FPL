@@ -47,11 +47,11 @@ bool CCameraSensor::CameraSensor::open() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-CCameraImage::Image* CCameraSensor::CameraSensor::read() {
+ImageWrapper::Image* CCameraSensor::CameraSensor::read() {
     if( m_pCameraSensor == NULL ) {
         return NULL;
     }
-    std::vector<CCameraImage::Image*> vImages;
+    std::vector<ImageWrapper::Image*> vImages;
     bool bRead = m_pCameraSensor->read( vImages );
     if( bRead && !vImages.empty() ) {
         return vImages[0];
@@ -60,7 +60,7 @@ CCameraImage::Image* CCameraSensor::CameraSensor::read() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool CCameraSensor::CameraSensor::read( std::vector<CCameraImage::Image*>& vImages ) {
+bool CCameraSensor::CameraSensor::read( std::vector<ImageWrapper::Image*>& vImages ) {
     if( m_pCameraSensor == NULL ) {
         return false;
     }

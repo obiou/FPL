@@ -117,10 +117,10 @@ bool GetBoxToTrack( CCameraSensor::CameraSensor& cameraSensor,
     bFirstPoint  = true;
     cvSetMouseCallback( "Select Box", my_box_cb, 0 );
 
-    CCameraImage::Image* pImageCapture;
+    ImageWrapper::Image* pImageCapture;
     IplImage *pImage;
     while( ( pImageCapture = cameraSensor.read() ) != NULL && !bGotBox ) {
-        IplImage aI = CCameraImage::ToIplImage( pImageCapture );
+        IplImage aI = pImageCapture->mImage;
         pImage = &aI;
       
         int c = cvWaitKey( 10 );
@@ -211,7 +211,7 @@ int main( int argc, char** argv )
         return -1;
     }
 
-    CCameraImage::Image* pImageCapture = cameraSensor.read();
+    ImageWrapper::Image* pImageCapture = cameraSensor.read();
     if( pImageCapture == NULL ) {
         cerr << "ERROR: problem capturing image from sensor, quitting..." << endl;
         return -1;
@@ -227,7 +227,7 @@ bool Tracking( CCameraSensor::CameraSensor& cameraSensor ) {
     IplImage* pRefImage = NULL;
     IplImage* pRefPatch = NULL;
 
-    CCameraImage::Image* pImageCapture;
+    ImageWrapper::Image* pImageCapture;
 
     // Start by acquiring the region to track
     int nBegX = 0;
@@ -322,7 +322,7 @@ bool Tracking( CCameraSensor::CameraSensor& cameraSensor ) {
 
     // Track
     while( ( pImageCapture = cameraSensor.read() ) != NULL ){
-        IplImage aI = CCameraImage::ToIplImage( pImageCapture );
+        IplImage aI = pImageCapture->mImage;
         IplImage *pImage = &aI;
             
         if( pImage->depth != 8 ) {

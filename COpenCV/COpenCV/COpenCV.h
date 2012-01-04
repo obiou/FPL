@@ -533,9 +533,11 @@ namespace COPENCV {
 
         ////////////////////////////////////////////////////
         ~Figure() {
-            if( m_bAllocated ) { cvReleaseImage( &m_pDrawingBuffer); }
-            m_bAllocated = false;
-            m_pDrawingBuffer = NULL;
+            if( m_bAllocated ) { 
+                cvReleaseImage( &m_pDrawingBuffer ); 
+                m_bAllocated = false;
+                m_pDrawingBuffer = NULL;
+            }
             cvDestroyWindow( m_sFigureName.c_str() ); // Check for existence?
         }
 

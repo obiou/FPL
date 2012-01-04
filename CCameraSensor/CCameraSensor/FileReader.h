@@ -46,7 +46,7 @@ namespace CCameraSensor {
             return true;
         }
 
-        bool read( std::vector<CCameraImage::Image*>& /*vImages*/ ) {
+        bool read( std::vector<ImageWrapper::Image*>& /*vImages*/ ) {
             std::cout << "Reading images." << std::endl; 
             return true;
         }

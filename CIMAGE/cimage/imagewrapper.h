@@ -29,29 +29,37 @@ namespace ImageWrapper {
         double dSystemTime; /// System time at which the image was taken (often estimated) in micro-seconds.
         double dCameraTime; /// Time on the camera device at which the image was taken (often more precise) in micro-seconds.
         std::string sSensorID;    /// Unique camera identifier. 
+        int width() { return mImage.cols; }
+        int height() { return mImage.rows; }
+        int widthStep() { return mImage.step; }
+        struct _Image clone() { struct _Image ret = *this; this->mImage.clone(); return *this; }
+        bool empty() { return mImage.data == NULL; }
     } Image;
 
     ////////////////////////////////////////////////////////////////////////////
-    bool imwrite( const std::string& sImageFileName,     ///<Input: image file name
-                  const std::string& sExtraInfoFileName, ///<Input: text containing extra info (e.g. camera time, sensor ID,...)
-                  const Image& image );
+    inline bool imwrite( const std::string& sImageFileName,     ///<Input: image file name
+                         const std::string& sExtraInfoFileName, ///<Input: text containing extra info (e.g. camera time, sensor ID,...)
+                         const Image& image );
 
 
     ////////////////////////////////////////////////////////////////////////////
-    bool imwrite( const std::string& sImageFileName,    ///<Input: image file name
-                  const Image& image );
+    inline bool imwrite( const std::string& sImageFileName,    ///<Input: image file name
+                         const Image& image );
+    
+    ////////////////////////////////////////////////////////////////////////////
+    inline Image imread( const std::string& sImageFileName, 
+                         const std::string& sExtraInfoFileName = "",
+                         int nFlags = 1 //<Input: same flag convention as in OpenCV (>0 colour, 0 greyscale, <0 as is)
+                         );
 
     ////////////////////////////////////////////////////////////////////////////
-    Image imread( const std::string& sImageFileName, 
-                  const std::string& sExtraInfoFileName = "",
-                  int nFlags = 1 //<Input: same flag convention as in OpenCV (>0 colour, 0 greyscale, <0 as is)
-                  );
+    inline Image FromIplImage( const IplImage* pImage, bool bClone = true );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool ImageWrapper::imwrite( const std::string& sImageFileName,    
-                            const std::string& sExtraInfoFileName,
-                            const Image& image ) {
+inline bool ImageWrapper::imwrite( const std::string& sImageFileName,    
+                                   const std::string& sExtraInfoFileName,
+                                   const Image& image ) {
     bool bSuccess = cv::imwrite( sImageFileName.c_str(), image.mImage );
     //std::cerr << "Saving " << sImageFileName << " and " << sExtraInfoFileName << std::endl;
     if( sExtraInfoFileName != "" ) {
@@ -64,13 +72,13 @@ bool ImageWrapper::imwrite( const std::string& sImageFileName,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool ImageWrapper::imwrite( const std::string& sImageFileName,  
-                            const Image& image ) {
+inline bool ImageWrapper::imwrite( const std::string& sImageFileName,  
+                                   const Image& image ) {
     return imwrite( sImageFileName, "", image );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ImageWrapper::Image ImageWrapper::imread( const std::string& sImageFileName, 
+inline ImageWrapper::Image ImageWrapper::imread( const std::string& sImageFileName, 
                                           const std::string& sExtraInfoFileName,
                                           int nFlags
                                           ) {
@@ -82,6 +90,21 @@ ImageWrapper::Image ImageWrapper::imread( const std::string& sImageFileName,
         retImage.dCameraTime = (double)oFile[ "CameraTime" ];
         retImage.sSensorID   = (std::string)oFile[ "SensorID" ];
     }
+    return retImage;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+inline ImageWrapper::Image ImageWrapper::FromIplImage( const IplImage* pImage, bool bClone ) {
+    Image retImage;
+    if( bClone ) {
+        retImage.mImage = cv::cvarrToMat( pImage ).clone();
+    }
+    else {
+        retImage.mImage = cv::cvarrToMat( pImage );
+    }
+    retImage.dSystemTime = 0;
+    retImage.dCameraTime = 0;
+    retImage.sSensorID   = "";
     return retImage;
 }
 

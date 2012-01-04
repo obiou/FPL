@@ -23,10 +23,11 @@ SET( CCAMERASENSOR_HAS_OPENCV "#define CCAMERASENSOR_HAS_OPENCV 1" )
 ################################################################################
 # Get Misc
 find_package_and_add( MISC CCAMERASENSOR )
+find_package_and_add( CIMAGE CCAMERASENSOR )
 
 ################################################################################
 # Get UEye
-FIND_PACKAGE( UEYE  QUIET)
+FIND_PACKAGE( UEYE QUIET)
 IF( UEYE_FOUND )
   MESSAGE( STATUS "Found UEye, adding support." )
   SET( CCAMERASENSOR_LIBRARIES ${CCAMERASENSOR_LIBRARIES} ${UEYE_LIBRARIES} )
@@ -68,14 +69,12 @@ add_definitions( ${CCAMERASENSOR_DEFINITIONS} )
 set( LIB_SRCS
   CCameraSensor/CameraSensor.cpp
   CCameraSensor/FileReaderFromList.cpp
-  CCameraSensor/Image.cpp
   CCameraSensor/OpenCVCamera.cpp
 )
 set( LIB_HDRS
   CCameraSensor/CameraSensor.h
   CCameraSensor/CameraSensorInterface.h
   CCameraSensor/FileReaderFromList.h
-  CCameraSensor/Image.h
   CCameraSensor/OpenCVCamera.h
 )
 if( UEYE_FOUND )

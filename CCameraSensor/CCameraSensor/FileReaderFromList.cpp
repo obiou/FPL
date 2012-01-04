@@ -92,7 +92,7 @@ namespace CCameraSensor {
             std::cerr << "ERROR in FileReaderFromList, could not open: " << m_sListFileName << "." << std::endl;
         }
         else {
-            m_pReadImageHolder = new CCameraImage::Image();
+            m_pReadImageHolder = new ImageWrapper::Image();
         }
         return m_bOpened;
     }
@@ -112,7 +112,7 @@ namespace CCameraSensor {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    bool FileReaderFromList::read( std::vector<CCameraImage::Image*>& vImages ) {
+    bool FileReaderFromList::read( std::vector<ImageWrapper::Image*>& vImages ) {
         std::string sLine;
         if( get_not_comment_line( m_File, sLine ) ) {
             if( m_pCapturedImage != NULL ) {
@@ -124,10 +124,10 @@ namespace CCameraSensor {
                 return false;
             }
             m_sLastReadFile = sLine;
-            *m_pReadImageHolder = CCameraImage::FromIplImage( m_pCapturedImage );
-            m_pReadImageHolder->cameraTime( 0 ); 
-            m_pReadImageHolder->time( 0 );
-            m_pReadImageHolder->sensorID( "" );
+            *m_pReadImageHolder = ImageWrapper::FromIplImage( m_pCapturedImage );
+            m_pReadImageHolder->dCameraTime = 0; 
+            m_pReadImageHolder->dSystemTime = 0;
+            m_pReadImageHolder->sSensorID = "";
             {
                 // Look for extra file
                 std::string sExtraInfo = sLine;
@@ -141,14 +141,14 @@ namespace CCameraSensor {
                         std::string sPar;
                         if( get_parameter( "image.sensorID", "=",
                                            sExtraLine, sPar ) ) {
-                            m_pReadImageHolder->sensorID( sPar );
+                            m_pReadImageHolder->sSensorID = sPar;
                         }
                         else if( get_parameter( "image.cameraTime", "=",
                                                 sExtraLine, sPar ) ) {
                             std::stringstream oss; oss << sPar;
                             double dCameraTime;
                             if( oss >> dCameraTime ) {
-                                m_pReadImageHolder->cameraTime( dCameraTime );
+                                m_pReadImageHolder->dCameraTime = dCameraTime;
                             }
                         }
                         else if( get_parameter( "image.time", "=",
@@ -156,7 +156,7 @@ namespace CCameraSensor {
                             std::stringstream oss; oss << sPar;
                             double dTime;
                             if( oss >> dTime ) {
-                                m_pReadImageHolder->time( dTime );
+                                m_pReadImageHolder->dSystemTime = dTime;
                             }
                         }
                     }
