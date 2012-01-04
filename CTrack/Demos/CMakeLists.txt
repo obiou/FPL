@@ -40,7 +40,7 @@ INCLUDE_DIRECTORIES( ${INCLUDE_DIRS} )
 ADD_DEFINITIONS( ${DEFINITIONS} )
 
 ################################################################################
-message( STATUS "LIBS: " ${LIBS} )
+#message( STATUS "LIBS: " ${LIBS} )
 
 ################################################################################
 FOREACH( EXECUTABLE ${EXECUTABLES} )

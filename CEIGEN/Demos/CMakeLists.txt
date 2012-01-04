@@ -9,8 +9,6 @@ set( LIBS ${CEIGEN_LIBRARIES} )
 set( INCLUDES ${CEIGEN_INCLUDE_DIR} )
 set( DEFINITIONS ${CEIGEN_DEFINITIONS} )
 
-message( STATUS "INCLUDES: " ${INCLUDES} )
-
 ################################################################################
 find_package( OPENCV REQUIRED )
 set( LIBS ${LIBS} ${OPENCV_LIBRARIES} )

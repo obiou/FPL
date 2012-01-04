@@ -131,16 +131,16 @@ int main( int argc, char** argv )
     // Create a vector of image points
     std::vector<Eigen::MatrixXd> vImagePoints;
 
-    ImageWrapper::Image* pImageCapture = cameraSensor.read();
+    ImageWrapper::Image aImageCapture = cameraSensor.read();
 
-    if( pImageCapture == NULL ) {
+    if( aImageCapture.empty() ) {
         cerr << "ERROR: problem capturing image from sensor, quitting..." << endl;
         return -1;
     }
-    std::string sSensorID = pImageCapture->sSensorID;
-    unsigned int nImageWidth = pImageCapture->mImage.cols;
-    unsigned int nImageHeight = pImageCapture->mImage.rows;
-    unsigned int nImageWidthStep = pImageCapture->mImage.step;
+    std::string sSensorID = aImageCapture.sSensorID;
+    unsigned int nImageWidth = aImageCapture.mImage.cols;
+    unsigned int nImageHeight = aImageCapture.mImage.rows;
+    unsigned int nImageWidthStep = aImageCapture.mImage.step;
 
     IplImage* pImUndist = cvCreateImage( cvSize( nImageWidth, nImageHeight), IPL_DEPTH_8U, 1 );
 
@@ -154,16 +154,16 @@ int main( int argc, char** argv )
         sCameraParamsFile = oss.str();
     }
     GridCalibrator gridCalibrator( sCameraModelType, 
-                                   pImageCapture->width(), pImageCapture->height(),
+                                   aImageCapture.width(), aImageCapture.height(),
                                    board_size.height, board_size.width );
 
     int nNumCapturedImages = 0;
     bool bAdd = false;
     prev_timestamp = clock();
     double dRMS = 0;
-    while( ( pImageCapture = cameraSensor.read() ) != NULL ) {
+    while( !( aImageCapture = cameraSensor.read() ).empty() ) {
         //std::cout << "LastReadFile: " << cameraSensor.get( "LastReadFile" ) << std::endl;
-        IplImage aI = pImageCapture->mImage;
+        IplImage aI = aImageCapture.mImage;
         IplImage *pImage = &aI;
         bool bFound = false;
         CvPoint text_origin;
@@ -195,7 +195,7 @@ int main( int argc, char** argv )
                 if( bLive ) {
                     snprintf( sImageName, MAX_FILENAME, "view_%03d.png", nNumCapturedImages );
                     snprintf( sImageNameExtra, MAX_FILENAME, "view_%03d.txt", nNumCapturedImages );
-                    ImageWrapper::imwrite( sImageName, sImageNameExtra, *pImageCapture );
+                    ImageWrapper::imwrite( sImageName, sImageNameExtra, aImageCapture );
                 }
                 nNumCapturedImages++;
             }

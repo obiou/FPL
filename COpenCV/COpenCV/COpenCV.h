@@ -615,6 +615,24 @@ namespace COPENCV {
         }
 
         ////////////////////////////////////////////////////
+        void imshow2( const cv::Mat& mImage1,
+                      const cv::Mat& mImage2,
+                      const bool bHorizontal = true
+                      ) { 
+            IplImage image1 = mImage1;
+            IplImage image2 = mImage2;
+            imshow2( &image1, &image2, bHorizontal );
+        }
+
+#if COPENCV_HAS_CIMAGE
+        ////////////////////////////////////////////////////
+        void imshow2( const ImageWrapper::Image& mImage1,
+                      const ImageWrapper::Image& mImage2,
+                      const bool bHorizontal = true ) {
+            imshow2( mImage1.mImage, mImage2.mImage, bHorizontal );
+        }
+#endif
+        ////////////////////////////////////////////////////
         void imshow( IplImage* pImage, bool bKeepSize ) {
             if( !bKeepSize ) {
                 imshow( pImage );

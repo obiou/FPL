@@ -54,16 +54,15 @@ int main( int argc, char** argv )
     COPENCV::Figure fig( "Camera Image", false );
 
     char nKey = 0;
-    Image* pImage = cameraSensor.read();
-    if( pImage == NULL ) {
-        cerr << "Got NULL image." << endl;
+    Image aImage = cameraSensor.read();
+    if( aImage.empty() ) {
+        cerr << "Got empty image." << endl;
         return -1;
     }
-    std::cout << "SensorID: " << pImage->sSensorID << std::endl;
+    std::cout << "SensorID: " << aImage.sSensorID << std::endl;
 
-    while( pImage != NULL && nKey != 27 ) {
-        IplImage aI = pImage->mImage;
-        fig.imshow( &aI );
+    while( !aImage.empty() && nKey != 27 ) {
+        fig.imshow( aImage );
         fig.draw();
 
         //std::cout << "Time: " << pImage->time() << std::endl;
@@ -75,7 +74,7 @@ int main( int argc, char** argv )
             nKey = fig.wait( 5 );
         }
         double d0 = CMISC::Tic();
-        pImage = cameraSensor.read();
+        aImage = cameraSensor.read();
         cout << "Time taken to acquire: " << CMISC::TocMS( d0 ) << endl;
     }
 

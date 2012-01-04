@@ -10,14 +10,13 @@ SET( DEFINITIONS ${MISC_DEFINITIONS} )
 
 ################################################################################
 FIND_PACKAGE( CCAMERASENSOR REQUIRED )
-MESSAGE( STATUS "Found CCameraSensor, adding support. ${CCAMERASENSOR_INCLUDE_DIR}" )
+#MESSAGE( STATUS "Found CCameraSensor, adding support. ${CCAMERASENSOR_INCLUDE_DIR}" )
 SET( LIBS ${LIBS} ${CCAMERASENSOR_LIBRARIES} )
 SET( INCLUDES ${INCLUDES} ${CCAMERASENSOR_INCLUDE_DIR} )
 SET( DEFINITIONS ${DEFINITIONS} ${CCAMERASENSOR_DEFINITIONS} )
 
 ################################################################################
 FIND_PACKAGE( OPENCV REQUIRED )
-MESSAGE( STATUS "Found OpenCV, adding support." )
 SET( LIBS ${LIBS} ${OPENCV_LIBRARIES} )
 SET( INCLUDES ${INCLUDES} ${OPENCV_INCLUDE_DIR} )
 SET( DEFINITIONS ${DEFINITIONS} "-DHAS_OPENCV" )

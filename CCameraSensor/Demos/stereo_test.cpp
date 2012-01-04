@@ -49,18 +49,15 @@ int main()
     COPENCV::Figure fig( "UEyeImage", false );
 
     char nKey = 0;
-    Image* pImage1 = cameraSensor1.read();
-    Image* pImage2 = cameraSensor2.read();
-    std::cout << "SensorID: " << pImage1->sSensorID << std::endl;
-    std::cout << "SensorID: " << pImage2->sSensorID << std::endl;
+    Image aImage1 = cameraSensor1.read();
+    Image aImage2 = cameraSensor2.read();
+    std::cout << "SensorID: " << aImage1.sSensorID << std::endl;
+    std::cout << "SensorID: " << aImage2.sSensorID << std::endl;
 
     bool bBlock = false;
 
-    while( pImage1 != NULL && pImage2 != NULL && nKey != 32 ) {
-        IplImage aI1 = pImage1->mImage;
-        IplImage aI2 = pImage2->mImage;
-
-        fig.imshow2( &aI1, &aI2 );
+    while( !aImage1.empty() && !aImage2.empty() && nKey != 32 ) {
+        fig.imshow2( aImage1, aImage2 );
         fig.draw();
 
         //std::cout << "Time: " << pImage->time() << std::endl;
@@ -74,8 +71,8 @@ int main()
         double d0 = CMISC::Tic();
         cameraSensor1.set( "Trigger", true );
         cameraSensor2.set( "Trigger", true );
-        pImage1 = cameraSensor1.read();
-        pImage2 = cameraSensor2.read();
+        aImage1 = cameraSensor1.read();
+        aImage2 = cameraSensor2.read();
         cout << "Time taken to acquire: " << CMISC::TocMS( d0 ) << endl;
     }
 

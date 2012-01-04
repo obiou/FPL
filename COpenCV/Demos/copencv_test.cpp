@@ -43,22 +43,21 @@ int main( int argc, char** argv )
     COPENCV::Figure fig2( "UEyeImage2" );
 
     char nKey = 0;
-    Image* pImage = cameraSensor.read();
-    if( pImage != NULL ) {
-        std::cout << "SensorID: " << pImage->sSensorID << std::endl;
+    Image aImage = cameraSensor.read();
+    if( !aImage.empty() ) {
+        std::cout << "SensorID: " << aImage.sSensorID << std::endl;
     }
-    while( pImage != NULL && nKey != 32 ) {
-        IplImage aI = pImage->mImage;
-        fig1.imshow( &aI );
+    while( !aImage.empty() && nKey != 32 ) {
+        fig1.imshow( aImage );
         fig1.draw();
 
-        fig2.imshow( &aI );
+        fig2.imshow( aImage );
         fig2.draw();
 
         nKey = fig1.wait( 10 );
         fig2.wait( 10 );
         //double d0 = CMISC::Tic();
-        pImage = cameraSensor.read();
+        aImage = cameraSensor.read();
         //cout << "Time taken to acquire: " << CMISC::TocMS( d0 ) << endl;
         if( (char)nKey == 27 ) {
             return 0;

@@ -33,7 +33,7 @@ namespace CCameraSensor {
     public:
         ////////////////////////////////////////////////////////////////////////
     FileReaderFromList() : 
-        m_pReadImageHolder( NULL ), m_bOpened(false), m_pCapturedImage( NULL ) 
+        m_bOpened(false), m_pCapturedImage( NULL ) 
             {}
 
         ////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace CCameraSensor {
         bool close();
 
         ////////////////////////////////////////////////////////////////////////
-        bool read( std::vector<ImageWrapper::Image*>& vImages );
+        bool read( std::vector<ImageWrapper::Image>& vImages );
 
         ////////////////////////////////////////////////////////////////////////
         std::string get( const std::string& sKey );
@@ -65,7 +65,7 @@ namespace CCameraSensor {
         std::ifstream m_File;
         std::string m_sListFileName;
         std::string m_sLastReadFile;
-        ImageWrapper::Image* m_pReadImageHolder; 
+        ImageWrapper::Image m_ReadImageHolder; 
         bool m_bOpened;
         IplImage* m_pCapturedImage;
     };

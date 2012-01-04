@@ -60,7 +60,7 @@ CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/CCameraModelIncludes.cmake.in
 ################################################################################
 # Build CCameraModel
 add_subdirectory( CCameraModel )
-message( STATUS "CCAMERAMODEL_LIBRARIES: " ${CCAMERAMODEL_LIBRARIES} )
+#message( STATUS "CCAMERAMODEL_LIBRARIES: " ${CCAMERAMODEL_LIBRARIES} )
 
 ################################################################################
 # Optionally build demos

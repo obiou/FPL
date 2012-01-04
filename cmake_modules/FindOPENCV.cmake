@@ -60,7 +60,7 @@ SET (OpenCV_POSSIBLE_ROOT_DIRS
 # get correct prefix for current gcc compiler version for gcc 3.x  4.x
 IF    (${CMAKE_COMPILER_IS_GNUCXX})
   IF    (NOT OpenCV_FIND_QUIETLY)
-    MESSAGE(STATUS "Checking GNUCXX version 3/4 to determine  OpenCV /opt/net/ path")
+    #MESSAGE(STATUS "Checking GNUCXX version 3/4 to determine  OpenCV /opt/net/ path")
   ENDIF (NOT OpenCV_FIND_QUIETLY)
   EXEC_PROGRAM(${CMAKE_CXX_COMPILER} ARGS --version OUTPUT_VARIABLE CXX_COMPILER_VERSION)  
   IF   (CXX_COMPILER_VERSION MATCHES ".*3\\.[0-9].*")

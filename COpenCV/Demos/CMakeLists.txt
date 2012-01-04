@@ -18,7 +18,7 @@ IF( CCAMERASENSOR_FOUND )
   SET( DEFINITIONS ${DEFINITIONS} ${CCAMERASENSOR_DEFINITIONS} )
 ENDIF( CCAMERASENSOR_FOUND )
 
-message( STATUS "INCLUDE_DIRS: " ${INCLUDE_DIRS} )
+#message( STATUS "INCLUDE_DIRS: " ${INCLUDE_DIRS} )
 
 ################################################################################
 INCLUDE_DIRECTORIES( ${INCLUDE_DIRS} )

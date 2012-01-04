@@ -22,7 +22,7 @@
 ////////////////////////////////////////////////////////////////////////////////    
 CCameraSensor::OpenCVCamera::OpenCVCamera() 
     : m_bOpened( false ), m_pCvCapture( NULL ),
-      m_pCapturedImage( NULL ), m_pReadImageHolder( NULL ) {
+      m_pCapturedImage( NULL ) {
     srand ( time(NULL) );
     std::ostringstream os;
     os << "OpenCV_" ;
@@ -52,7 +52,6 @@ bool CCameraSensor::OpenCVCamera::open() {
         std::cerr << "ERROR: in OpenCVCamera::open(), OpenCVCamera, calling capture returned NULL" << std::endl;
         return false;
     }
-    m_pReadImageHolder = new ImageWrapper::Image();
     return true;
 }
 
@@ -65,10 +64,6 @@ bool CCameraSensor::OpenCVCamera::close() {
     }
     m_pCapturedImage = NULL;
 #endif
-    if( m_pReadImageHolder != NULL ) {
-        delete( m_pReadImageHolder );
-    }
-    m_pReadImageHolder = NULL; 
     if( m_pCvCapture != NULL ) {
         cvReleaseCapture( &m_pCvCapture );
     }
@@ -78,7 +73,7 @@ bool CCameraSensor::OpenCVCamera::close() {
 } 
 
 ////////////////////////////////////////////////////////////////////////////////    
-bool CCameraSensor::OpenCVCamera::read( std::vector<ImageWrapper::Image*>& vImages ) {
+bool CCameraSensor::OpenCVCamera::read( std::vector<ImageWrapper::Image>& vImages ) {
     if( !m_bOpened ) { 
         std::cerr << "ERROR: in OpenCVCamera::read(), has open() been called?" << std::endl;
         return false;
@@ -96,19 +91,19 @@ bool CCameraSensor::OpenCVCamera::read( std::vector<ImageWrapper::Image*>& vImag
         std::cerr << "ERROR: in OpenCVCamera::read(), m_pCapturedImage == NULL." << std::endl;
         return false;
     }
-    *m_pReadImageHolder = ImageWrapper::FromIplImage( m_pCapturedImage );
-    m_pReadImageHolder->dCameraTime = 0;
+    m_ReadImageHolder.mImage = m_pCapturedImage;
+    m_ReadImageHolder.dCameraTime = 0;
 #if 0
-    m_pReadImageHolder->dCameraTime =
+    m_ReadImageHolder.dCameraTime =
         ( cvGetCaptureProperty( m_pCvCapture, CV_CAP_PROP_POS_MSEC )*1e3 );
 #endif
-    m_pReadImageHolder->dSystemTime = 0; // Unclear how to get the correct time
-    m_pReadImageHolder->sSensorID = m_sSensorID;
+    m_ReadImageHolder.dSystemTime = 0; // Unclear how to get the correct time
+    m_ReadImageHolder.sSensorID = m_sSensorID;
 
-    vImages.push_back( m_pReadImageHolder );
+    vImages.push_back( m_ReadImageHolder );
 #if 0
     std::cout << cvGetCaptureProperty( m_pCvCapture, CV_CAP_PROP_POS_MSEC ) << std::endl;
-    std::cout << m_pReadImageHolder->cameraTime() << std::endl;
+    std::cout << m_ReadImageHolder.dCameraTime() << std::endl;
 #endif
     return true;
 }

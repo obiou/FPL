@@ -151,7 +151,7 @@ void CCameraSensor::CameraLogger::_GetImageAndQueue() {
         }
         else {
             std::lock_guard<std::mutex> mutex( m_Mutex );
-            std::vector<ImageWrapper::Image*> vImages;
+            std::vector<ImageWrapper::Image> vImages;
             if( !m_pCamera->read( vImages ) ) { continue; };
             if( vImages.empty() ) {
                 continue;
@@ -159,14 +159,14 @@ void CCameraSensor::CameraLogger::_GetImageAndQueue() {
             m_nCount++;
             if( vImages.size() == 1 ) {
                 ssFileName << m_sSuffix;
-                m_qImages.push_back( ImageAndName( vImages[0]->clone(), ssFileName.str() ) );
+                m_qImages.push_back( ImageAndName( vImages[0].clone(), ssFileName.str() ) );
             }
             else {
                 std::string sBeg = ssFileName.str();
                 for( size_t ii=0; ii<vImages.size(); ii++ ) {
                     ssFileName.clear();
                     ssFileName << sBeg << "_" << std::setw( g_nPaddingCameraNumber ) << std::setfill( '0' ) << m_sSuffix;
-                    m_qImages.push_back( ImageAndName( vImages[ii]->clone(), ssFileName.str() ) );
+                    m_qImages.push_back( ImageAndName( vImages[ii].clone(), ssFileName.str() ) );
                 }
             }
 

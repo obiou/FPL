@@ -44,7 +44,7 @@ namespace CCameraSensor {
         bool close();
 
         /// Each call will invalidate the previous image (make a copy if you wish to use it later)
-        bool read( std::vector<ImageWrapper::Image*>& vImages );
+        bool read( std::vector<ImageWrapper::Image>& vImages );
 
         std::string get( const std::string& sKey );
         bool set( const std::string& sKey, const std::string& sParameter );
@@ -55,7 +55,7 @@ namespace CCameraSensor {
         bool m_bOpened;
         CvCapture* m_pCvCapture;
         IplImage* m_pCapturedImage;
-        ImageWrapper::Image* m_pReadImageHolder;
+        ImageWrapper::Image m_ReadImageHolder;
         std::string m_sSensorID;
     };
 }

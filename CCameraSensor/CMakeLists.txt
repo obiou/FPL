@@ -27,9 +27,9 @@ find_package_and_add( CIMAGE CCAMERASENSOR )
 
 ################################################################################
 # Get UEye
-FIND_PACKAGE( UEYE QUIET)
+FIND_PACKAGE( UEYE QUIET )
 IF( UEYE_FOUND )
-  MESSAGE( STATUS "Found UEye, adding support." )
+  MESSAGE( STATUS "CCAMERASENSOR: Found UEye, adding support." )
   SET( CCAMERASENSOR_LIBRARIES ${CCAMERASENSOR_LIBRARIES} ${UEYE_LIBRARIES} )
   SET( CCAMERASENSOR_INCLUDE_DIR ${CCAMERASENSOR_INCLUDE_DIR} ${UEYE_INCLUDE_DIR} )
   SET( CCAMERASENSOR_HAS_UEYE "#define CCAMERASENSOR_HAS_UEYE 1" )
@@ -37,7 +37,7 @@ IF( UEYE_FOUND )
       SET( CCAMERASENSOR_DEFINITIONS ${CCAMERASENSOR_DEFINITIONS} "-D__LINUX__" )
   endif()
 ELSE( UEYE_FOUND )
-  MESSAGE( STATUS "Did not find UEye, not adding support." )
+  MESSAGE( STATUS "CCAMERASENSOR: Did not find UEye, not adding support." )
 ENDIF( UEYE_FOUND )
 
 ################################################################################

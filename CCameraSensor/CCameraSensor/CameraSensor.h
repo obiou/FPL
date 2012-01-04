@@ -74,10 +74,10 @@ namespace CCameraSensor {
         ////////////////////////////////////////////////////////////////////////
         /// Simplified call to only retrieve one image.
         /// (does not appear in the interface)
-        ImageWrapper::Image* read();
+        ImageWrapper::Image read();
 
         ////////////////////////////////////////////////////////////////////////
-        bool read( std::vector<ImageWrapper::Image*>& vImages );
+        bool read( std::vector<ImageWrapper::Image>& vImages );
 
         ////////////////////////////////////////////////////////////////////////
         bool close();

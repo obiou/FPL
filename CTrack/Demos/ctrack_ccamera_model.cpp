@@ -121,10 +121,10 @@ bool GetBoxToTrack( CameraSensor& cameraSensor,
 
     IplImage* pImage = NULL;
     
-    Image* pImageCapture = cameraSensor.read();
-    if( pImageCapture == NULL ) { return false; }
+    Image aImageCapture = cameraSensor.read();
+    if( aImageCapture.empty() ) { return false; }
 
-    IplImage aI = pImageCapture->mImage;
+    IplImage aI = aImageCapture.mImage;
     pImage = &aI;
 
     while( !bGotBox ) {
@@ -132,9 +132,9 @@ bool GetBoxToTrack( CameraSensor& cameraSensor,
         if( (char) c == 27 )
             break;
 
-        pImageCapture = cameraSensor.read();
-        if( pImageCapture == NULL ) { return false; }
-        aI = pImageCapture->mImage;
+        aImageCapture = cameraSensor.read();
+        if( aImageCapture.empty() ) { return false; }
+        aI = aImageCapture.mImage;
         pImage = &aI;
 
         if( !bFirstPoint && !bGotBox ) { // Draw intermediate box
@@ -184,9 +184,9 @@ bool CropBoxToTrack( CameraSensor& cameraSensor,
                      const int nPatchWidth, const int nPatchHeight
                      ) 
 {
-    Image* pImageCapture = cameraSensor.read();
-    if( pImageCapture == NULL ) { return false; }
-    IplImage aI = pImageCapture->mImage;
+    Image aImageCapture = cameraSensor.read();
+    if( aImageCapture.empty() ) { return false; }
+    IplImage aI = aImageCapture.mImage;
     IplImage* pImage = &aI;
 
     int nWidth  = pImage->width;
@@ -228,17 +228,17 @@ int main( int argc, char** argv )
         cerr << "Problem opening camera sensor." << endl;
         return -1;
     }
-    Image* pImageCapture = cameraSensor.read();
-    if( pImageCapture == NULL ) {
+    Image aImageCapture = cameraSensor.read();
+    if( aImageCapture.empty() ) {
         cerr << "Got NULL image." << endl;
         return -1;
     }
 
-    std::string sSensorID = pImageCapture->sSensorID;
+    std::string sSensorID = aImageCapture.sSensorID;
     std::cout << "SensorID: " << sSensorID << std::endl;
-    unsigned int nImageWidth = pImageCapture->mImage.cols;
-    unsigned int nImageHeight = pImageCapture->mImage.rows;
-    unsigned int nImageWidthStep = pImageCapture->mImage.step;
+    unsigned int nImageWidth = aImageCapture.mImage.cols;
+    unsigned int nImageHeight = aImageCapture.mImage.rows;
+    unsigned int nImageWidthStep = aImageCapture.mImage.step;
 
     ////////////////////////////////////////////////////////
     IplImage* pRefImage = NULL;
@@ -246,7 +246,7 @@ int main( int argc, char** argv )
 
     // Wait for camera to stabilise
     for( int ii=0; ii<10; ii++ ) {
-        if( cameraSensor.read() == NULL ) {
+        if( cameraSensor.read().empty() ) {
             return -1;
         }
     }
@@ -390,8 +390,8 @@ int main( int argc, char** argv )
 
     ////////////////////////////////////////////////////////
     // Track
-    while( ( pImageCapture = cameraSensor.read() ) != NULL ) {
-        IplImage aI = pImageCapture->mImage;
+    while( !( aImageCapture = cameraSensor.read() ).empty() ) {
+        IplImage aI = aImageCapture.mImage;
         pCapturedImage = &aI;
             
         if( pCapturedImage->depth != 8 ) {

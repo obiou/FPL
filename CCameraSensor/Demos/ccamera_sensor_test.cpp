@@ -29,16 +29,23 @@ int main()
     std::string sListFile = "list_views";
     cameraSensor.set( "ListFileName", sListFile );
     cameraSensor.open();
-    Image* pImage = cameraSensor.read();
+    Image aImage = cameraSensor.read();
     COPENCV::Figure fig( "UEyeImage", false );
     int nKey = 0;
-    while( pImage != NULL && (char)nKey != 'q' ) {
-        IplImage aI = pImage->mImage;
-        fig.imshow( &aI );
+    Image aPrevImage;
+    bool bFirst = true;
+    while( !aImage.empty() && (char)nKey != 'q' ) {
+        if( bFirst ) {
+            bFirst = false;
+            aPrevImage = aImage.clone();
+        }
+        //fig.imshow( aImage );
+        fig.imshow2( aImage, aPrevImage );
         fig.draw();
+        aPrevImage = aImage.clone();
 
         nKey = fig.wait();
-        pImage = cameraSensor.read();
+        aImage = cameraSensor.read();
     }
     cameraSensor.close();   
 
