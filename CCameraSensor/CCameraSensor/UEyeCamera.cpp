@@ -26,8 +26,7 @@ CCameraSensor::UEyeCamera::UEyeCamera() : m_bOpened( false ), m_bTriggered( fals
                                           m_pPrevLast( NULL ), m_nPrevNum( 0 ), m_nNumConnectedCams( 0 ), 
                                           //m_nCameraTimeOffset( 0 ),
                                           m_pCamList( NULL ), m_hCamera( (HIDS) 0 ),
-                                          m_nImageWidth( 0 ), m_nImageHeight( 0 ),
-                                          m_pReadImageHolder( NULL ) {
+                                          m_nImageWidth( 0 ), m_nImageHeight( 0 ) {
     //m_rEventThreadToComputeTimeOffset( this ) { 
     m_mParameters[ "ExternalTrigger" ] = "0";
 }
@@ -39,10 +38,6 @@ CCameraSensor::UEyeCamera::~UEyeCamera() {
         delete m_pCamList;
     }
     m_pCamList = NULL;
-    if( m_pReadImageHolder != NULL ) {
-        delete m_pReadImageHolder;
-    }
-    m_pReadImageHolder = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////    
@@ -180,15 +175,12 @@ bool CCameraSensor::UEyeCamera::open() {
     }
 
     // Allocate image holder
-    m_pReadImageHolder = new CCameraImage::Image();
-    m_pReadImageHolder->width( m_nImageWidth );
-    m_pReadImageHolder->height( m_nImageHeight );
-    m_pReadImageHolder->widthStep( m_nImageWidthStep );
-    m_pReadImageHolder->type( GL_UNSIGNED_BYTE );
-    m_pReadImageHolder->format( GL_LUMINANCE );
-    m_pReadImageHolder->time( 0 );
-    m_pReadImageHolder->sensorID( m_sSensorID );
-
+    m_ReadImageHolder.mImage = cv::Mat( m_nImageHeight, m_nImageWidth, CV_8UC1, 
+                                        (new unsigned char[m_nImageHeight*m_nImageWidthStep] ),
+                                        m_nImageWidthStep );
+    m_ReadImageHolder.dCameraTime = 0;
+    m_ReadImageHolder.dSystemTime = 0;
+    m_ReadImageHolder.sSensorID = m_sSensorID;
     return true;
 }
 
@@ -212,7 +204,7 @@ bool CCameraSensor::UEyeCamera::close() {
 } 
 
 ////////////////////////////////////////////////////////////////////////////////    
-bool CCameraSensor::UEyeCamera::read( std::vector<CCameraImage::Image*>& vImages ) {
+bool CCameraSensor::UEyeCamera::read( std::vector<ImageWrapper::Image>& vImages ) {
     if( !m_bOpened ) { 
         std::cerr << "ERROR: in UEyeCamera::read(), has open() been called?" << std::endl;
         return false;
@@ -276,14 +268,16 @@ bool CCameraSensor::UEyeCamera::read( std::vector<CCameraImage::Image*>& vImages
 
     // Associate last
     // Best time but this is camera time... 
-    m_pReadImageHolder->cameraTime( ImageInfo.u64TimestampDevice/10 );
+    m_ReadImageHolder.dCameraTime = ImageInfo.u64TimestampDevice/10;
     // Not very good time ~1ms precision
-    m_pReadImageHolder->time( nAcquisitionTime );
-    m_pReadImageHolder->data( (unsigned char*)pLast );
-    m_pReadImageHolder->sensorID( m_sSensorID );
+    m_ReadImageHolder.dSystemTime = ImageInfo.TimestampSystem.wMilliseconds;
+    m_ReadImageHolder.sSensorID = m_sSensorID;
 
+    m_ReadImageHolder.mImage = cv::Mat( m_nImageHeight, m_nImageWidth,
+                                        CV_8UC1, (unsigned char*)pLast,
+                                        m_nImageWidthStep ).clone();
     vImages.clear();
-    vImages.push_back( m_pReadImageHolder );
+    vImages.push_back( m_ReadImageHolder );
 
     //std::cout << "Acquisition time: " << m_pReadImageHolder->time() << std::endl;
 

@@ -52,7 +52,7 @@ namespace CCameraSensor {
         bool close();
 
         /// Each call will invalidate the previous image (make a copy if you wish to use it later)
-        bool read( std::vector<CCameraImage::Image*>& vImages );
+        bool read( std::vector<ImageWrapper::Image>& vImages );
 
         std::string get( const std::string& sKey ) {
             std::cout << "Calling get with key: " << sKey << std::endl;
@@ -99,7 +99,7 @@ namespace CCameraSensor {
         std::map<char*,int> m_mMemoryToImageID;
         std::map<char*,int> m_mMemoryToSeqID;
         std::string m_sSensorID;
-        CCameraImage::Image* m_pReadImageHolder;
+        ImageWrapper::Image m_ReadImageHolder;
         //UEyeEventThread<OffsetFunctor> m_rEventThreadToComputeTimeOffset;
         std::map<std::string,std::string> m_mParameters;
         static const int NUM_RING_BUFFER_IMAGES;
