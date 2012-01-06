@@ -42,16 +42,14 @@ int main()
 
     COPENCV::Figure fig( "UEyeImage", false );
 
-    char nKey = 0;
+    int nKey = 0;
     Image aImage = cameraSensor.read();
     std::cout << "SensorID: " << aImage.sSensorID << std::endl;
 
-    while( !aImage.empty() && nKey != 32 ) {
+    while( !aImage.empty() && (char)nKey != 32 ) {
         fig.imshow( aImage );
         fig.draw();
-
         //std::cout << "Time: " << pImage->time() << std::endl;
-
         nKey = fig.wait( 5 );
         double d0 = CMISC::Tic();
         aImage = cameraSensor.read();
