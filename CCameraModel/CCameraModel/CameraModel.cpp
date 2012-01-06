@@ -109,6 +109,10 @@ namespace CCameraModel {
     ////////////////////////////////////////////////////////////////////////////
     bool CameraModel::load( const std::string& sFileName ) {
         std::ifstream inFile( sFileName.c_str() );
+        if( !inFile.is_open() ) {
+            std::cerr << "ERROR opening file: " << sFileName << std::endl;
+            return false;
+        }
         // Look for camera type
         std::string sCameraType;
         const std::string sCameraTypePrefix = "cameraModel.CameraType";
