@@ -27,8 +27,8 @@ IF( NOT CMAKE_BUILD_TYPE )
 ENDIF( NOT CMAKE_BUILD_TYPE )
 
 IF( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
-  SET( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wextra " )
-  SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall  -Wextra " )
+  SET( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wextra -Wconversion -Wuninitialized " )
+  SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall  -Wextra -Wconversion -Wuninitialized " )
 ENDIF( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
  
 #SET( CMAKE_OSX_ARCHITECTURES "i686" )
