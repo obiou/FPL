@@ -29,7 +29,7 @@ namespace CMISC {
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     float randf() {
-        return (float)rand()/RAND_MAX;
+        return static_cast<float>(rand())/static_cast<float>(RAND_MAX);
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -43,12 +43,12 @@ namespace CMISC {
     void rand_gaussf( float& y1, float& y2 ) {
         float x1, x2, w;
         do {
-            x1 = 2.0 * randf() - 1.0;
-            x2 = 2.0 * randf() - 1.0;
+            x1 = 2.0f * randf() - 1.0f;
+            x2 = 2.0f * randf() - 1.0f;
             w = x1 * x1 + x2 * x2;
         } while ( w >= 1.0 );
         
-        w = sqrt( (-2.0 * log( w ) ) / w );
+        w = sqrtf( (-2.0f * logf( w ) ) / w );
         y1 = x1 * w;
         y2 = x2 * w;        
     }

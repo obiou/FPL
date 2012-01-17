@@ -43,8 +43,8 @@ if( NOT CMAKE_BUILD_TYPE )
 endif( NOT CMAKE_BUILD_TYPE )
 
 if( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
-  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wextra " )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall  -Wextra " )
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wextra -Wuninitialized " )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall  -Wextra -Wuninitialized " )
 endif( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
  
 if( "${CMAKE_BUILD_TYPE}" STREQUAL "Release" )

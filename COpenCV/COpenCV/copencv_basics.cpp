@@ -27,9 +27,10 @@ IplImage* COPENCV::ExtractPatch( IplImage* pImage,
                                  IplImage* pPatchIn
                                  ) {
     return ExtractPatch( pImage, 
-                         vBox[0].first, vBox[0].second,
-                         vBox[2].first  - vBox[0].first + 1, 
-                         vBox[2].second - vBox[0].second + 1,
+                         static_cast<int>( vBox[0].first ), 
+                         static_cast<int>( vBox[0].second ),
+                         static_cast<int>( vBox[2].first  - vBox[0].first + 1 ), 
+                         static_cast<int>( vBox[2].second - vBox[0].second + 1 ),
                          pPatchIn );
 }
 

@@ -53,7 +53,7 @@ int main( int argc, char** argv )
 
     COPENCV::Figure fig( "Camera Image", false );
 
-    char nKey = 0;
+    int nKey = 0;
     Image aImage = cameraSensor.read();
     if( aImage.empty() ) {
         cerr << "Got empty image." << endl;

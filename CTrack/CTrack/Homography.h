@@ -38,17 +38,17 @@ namespace CTrack {
     const double dTOL = 1e-6;
 
     ////////////////////////////////////////////////////////////////////////////
-    float randf();
+    double randd();
     
     ////////////////////////////////////////////////////////////////////////////
     /// Compute random number from Gausssian distribution, returns two
     /// values at once (Box-Muller transform)
-    void rand_gaussf( float fMean, float fStd, float& y1, float& y2 );
+    void rand_gaussd( double dMean, double dStd, double& y1, double& y2 );
 
     ////////////////////////////////////////////////////////////////////////////
     /// Compute random number from Gausssian distribution, returns two
     /// values at once (Box-Muller transform)
-    void rand_gaussf( float& y1, float& y2 );
+    void rand_gaussd( double& y1, double& y2 );
 
     ////////////////////////////////////////////////////////////////////////////
     bool SolveNormalEquations( const int nDOF, double* JtJ, double* JtE,
@@ -192,23 +192,23 @@ namespace CTrack {
                   ) {
             Eigen::Matrix<double,8,1> vESMUpdate;
 
-            float dTmp, dSample;
+            double dTmp, dSample;
             // Draw samples and fill SL3 update vector (i.e. lie algebra term)
-            rand_gaussf( dMeanTx, dStdTx, dSample, dTmp );
+            rand_gaussd( dMeanTx, dStdTx, dSample, dTmp );
             vESMUpdate[0] = dSample;
-            rand_gaussf( dMeanTy, dStdTy, dSample, dTmp );
+            rand_gaussd( dMeanTy, dStdTy, dSample, dTmp );
             vESMUpdate[1] = dSample;
-            rand_gaussf( dMeanRz, dStdRz, dSample, dTmp );
+            rand_gaussd( dMeanRz, dStdRz, dSample, dTmp );
             vESMUpdate[2] = dSample;
-            rand_gaussf( dMeanS, dStdS, dSample, dTmp );
+            rand_gaussd( dMeanS, dStdS, dSample, dTmp );
             vESMUpdate[3] = dSample;
-            rand_gaussf( dMeanA, dStdA, dSample, dTmp );
+            rand_gaussd( dMeanA, dStdA, dSample, dTmp );
             vESMUpdate[4] = dSample;
-            rand_gaussf( dMeanSh, dStdSh, dSample, dTmp );
+            rand_gaussd( dMeanSh, dStdSh, dSample, dTmp );
             vESMUpdate[5] = dSample;
-            rand_gaussf( dMeanRy, dStdRy, dSample, dTmp );
+            rand_gaussd( dMeanRy, dStdRy, dSample, dTmp );
             vESMUpdate[6] = dSample;            
-            rand_gaussf( dMeanRx, dStdRx, dSample, dTmp );
+            rand_gaussd( dMeanRx, dStdRx, dSample, dTmp );
             vESMUpdate[7] = dSample;            
 
             id();

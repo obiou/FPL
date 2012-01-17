@@ -112,7 +112,7 @@ bool GetBoxToTrack( CameraSensor& cameraSensor,
                     IplImage** pRefImage,
                     IplImage** pRefPatch,
                     int* nBegX, int* nBegY,
-                    bool bImagesFromFile = false ) 
+                    bool /*bImagesFromFile = false*/ ) 
 {
     cvNamedWindow( "Select Box", 0 );
     bGotBox = false;
@@ -238,7 +238,7 @@ int main( int argc, char** argv )
     std::cout << "SensorID: " << sSensorID << std::endl;
     unsigned int nImageWidth = aImageCapture.mImage.cols;
     unsigned int nImageHeight = aImageCapture.mImage.rows;
-    unsigned int nImageWidthStep = aImageCapture.mImage.step;
+    unsigned int nImageWidthStep = (unsigned int)aImageCapture.mImage.step;
 
     ////////////////////////////////////////////////////////
     IplImage* pRefImage = NULL;

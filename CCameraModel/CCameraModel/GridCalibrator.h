@@ -91,7 +91,7 @@ namespace CCameraModel {
         double minimise();
 
         ////////////////////////////////////////////////////////////////////////
-        int get_num_views() { return m_vR.size(); }
+        size_t get_num_views() { return m_vR.size(); }
 
         ////////////////////////////////////////////////////////////////////////
         bool save( const std::string& sFileName ); 

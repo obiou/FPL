@@ -283,9 +283,9 @@ namespace CCameraSensor {
 
         // Associate last
         // Best time but this is camera time... 
-        m_ReadImageHolder.dCameraTime = nAcquisitionTime;
+        m_ReadImageHolder.dCameraTime = static_cast<double>( nAcquisitionTime );
         // Not very good time ~1ms precision        
-        m_ReadImageHolder.dSystemTime = nPCTime;
+        m_ReadImageHolder.dSystemTime = static_cast<double>( nPCTime );
         m_ReadImageHolder.sSensorID = m_sSensorID;
 
         // Copy the data... (could be sped up)

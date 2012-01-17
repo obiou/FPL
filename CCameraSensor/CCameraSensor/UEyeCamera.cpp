@@ -218,7 +218,7 @@ bool CCameraSensor::UEyeCamera::read( std::vector<ImageWrapper::Image>& vImages 
     // the call to the camera
     struct timeval tv;
     gettimeofday( &tv, NULL );
-    unsigned long long nAcquisitionTime = (unsigned long long)1e6*tv.tv_sec + tv.tv_usec; 
+    //unsigned long long nAcquisitionTime = (unsigned long long)1e6*tv.tv_sec + tv.tv_usec; 
 
     // Force trigger
     if( m_mParameters[ "ExternalTrigger"] != "1" || !m_bTriggered ) {
@@ -268,9 +268,9 @@ bool CCameraSensor::UEyeCamera::read( std::vector<ImageWrapper::Image>& vImages 
 
     // Associate last
     // Best time but this is camera time... 
-    m_ReadImageHolder.dCameraTime = ImageInfo.u64TimestampDevice/10;
+    m_ReadImageHolder.dCameraTime = static_cast<double>( ImageInfo.u64TimestampDevice/10 );
     // Not very good time ~1ms precision
-    m_ReadImageHolder.dSystemTime = ImageInfo.TimestampSystem.wMilliseconds;
+    m_ReadImageHolder.dSystemTime = static_cast<double>( ImageInfo.TimestampSystem.wMilliseconds );
     m_ReadImageHolder.sSensorID = m_sSensorID;
 
     m_ReadImageHolder.mImage = cv::Mat( m_nImageHeight, m_nImageWidth,

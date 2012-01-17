@@ -48,7 +48,7 @@ int main()
 
     COPENCV::Figure fig( "UEyeImage", false );
 
-    char nKey = 0;
+    int nKey = 0;
     Image aImage1 = cameraSensor1.read();
     Image aImage2 = cameraSensor2.read();
     std::cout << "SensorID: " << aImage1.sSensorID << std::endl;

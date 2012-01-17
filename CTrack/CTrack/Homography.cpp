@@ -115,23 +115,23 @@ namespace CTrack {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    float randf() {
-        return (float)rand()/RAND_MAX;
+    double randd() {
+        return static_cast<double>(rand())/static_cast<double>(RAND_MAX);
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    void rand_gaussf( float fMean, float fStd, float& y1, float& y2 ) {
-        rand_gaussf( y1, y2 );
-        y1 = fMean + y1*fStd;
-        y2 = fMean + y2*fStd;
+    void rand_gaussd( double dMean, double dStd, double& y1, double& y2 ) {
+        rand_gaussd( y1, y2 );
+        y1 = dMean + y1*dStd;
+        y2 = dMean + y2*dStd;
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    void rand_gaussf( float& y1, float& y2 ) {
-        float x1, x2, w;
+    void rand_gaussd( double& y1, double& y2 ) {
+        double x1, x2, w;
         do {
-            x1 = 2.0 * randf() - 1.0;
-            x2 = 2.0 * randf() - 1.0;
+            x1 = 2.0 * randd() - 1.0;
+            x2 = 2.0 * randd() - 1.0;
             w = x1 * x1 + x2 * x2;
         } while ( w >= 1.0 );
         

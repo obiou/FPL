@@ -92,7 +92,7 @@ namespace COPENCV {
         inline double _Tic() {
             struct timeval tv;
             gettimeofday(&tv, NULL);
-            return tv.tv_sec + 1e-6 * (tv.tv_usec);
+            return static_cast<double>( tv.tv_sec ) + 1e-6 * static_cast<double>(tv.tv_usec);
         }
         
         ////////////////////////////////////////////////////////////////////////////////
@@ -118,7 +118,8 @@ namespace COPENCV {
         ////////////////////////////////////////////////////////////////////////
         void Render() {
             const int nRenderHeight = int( m_pDrawingBuffer->height*m_nHeightPercentage/100. );
-            const unsigned char nGray = (m_BackColor.r+m_BackColor.g+m_BackColor.b)*255/3;
+            const unsigned char nGray = 
+                static_cast<unsigned char>( (m_BackColor.r+m_BackColor.g+m_BackColor.b)*255./3. );
             for( int ii=0; ii<nRenderHeight; ii++ ) {
                 for( int jj=0; jj<m_pDrawingBuffer->width; jj++ ) {
                     CvScalar s;

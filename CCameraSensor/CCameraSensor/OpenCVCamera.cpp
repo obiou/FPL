@@ -23,7 +23,7 @@
 CCameraSensor::OpenCVCamera::OpenCVCamera() 
     : m_bOpened( false ), m_pCvCapture( NULL ),
       m_pCapturedImage( NULL ) {
-    srand ( time(NULL) );
+    srand( static_cast<unsigned int>( time(NULL) ) );
     std::ostringstream os;
     os << "OpenCV_" ;
     os << rand() % 10000000 + 1;

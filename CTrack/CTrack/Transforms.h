@@ -421,10 +421,20 @@ inline void BilinearInterpolation( const int nWM, const int nHM,
         //*pWarpedPatch = (char) fTmp1 + (fYc-nFloorYc)*( fTmp2 - fTmp1 );
         *pWarpedPatch = (char) fTmp1 + (fYc-nFloorYc)*fTmp2 - (fYc-nFloorYc)*fTmp1;
 #else
+
+#if 0
         *pWarpedPatch = (char) ( fV00 +
                                  (fXc-nFloorXc)*(fV10-fV00)+
                                  (fYc-nFloorYc)*(fV01-fV00)-
                                  (fXc-nFloorXc)*(fYc-nFloorYc)*(fV01-fV00+fV10-fV11) );
+#endif
+
+        *pWarpedPatch = static_cast<char>
+            ( fV00 +
+              (fXc-static_cast<float>(nFloorXc))*(fV10-fV00)+
+              (fYc-static_cast<float>(nFloorYc))*(fV01-fV00)-
+              (fXc-static_cast<float>(nFloorXc))*(fYc-static_cast<float>(nFloorYc))*(fV01-fV00+fV10-fV11) );
+
 #endif
 
         //*pWarpedPatchMask = 1;
@@ -451,9 +461,9 @@ inline void BilinearInterpolationIllum( const int nWM, const int nHM,
 {
     // Truncates the values
     int nFloorXc = (int)fXc;
-    float fDx = fXc-nFloorXc;
+    float fDx = fXc - static_cast<float>(nFloorXc);
     int nFloorYc = (int)fYc;
-    float fDy = fYc-nFloorYc;
+    float fDy = fYc - static_cast<float>(nFloorYc);
     
     if( fXc >= 0. &&
         fYc >= 0. &&
@@ -467,7 +477,7 @@ inline void BilinearInterpolationIllum( const int nWM, const int nHM,
         float fV11 = pImage[nFloorXc+1 + (nFloorYc+1)*nImageWidthStep ];
         
         float fRes = fAlpha*( fV00+fDx*(fV10-fV00)+fDy*(fV01-fV00)-fDy*fDx*((fV01-fV00)+fV10-fV11) ) + fBeta;
-        *pWarpedPatch = fRes > 255 ? 255 : fRes < 0 ? 0 : char(fRes);
+        *pWarpedPatch = fRes > 255.f ? char(255) : (fRes < 0.f ? char(0) : static_cast<char>(fRes));
         //*pWarpedPatchMask = 1;
         maskFctr.set( true );
     } 

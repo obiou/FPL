@@ -31,7 +31,7 @@ namespace ImageWrapper {
         std::string sSensorID;    /// Unique camera identifier. 
         int width() { return mImage.cols; }
         int height() { return mImage.rows; }
-        int widthStep() { return mImage.step; }
+        int widthStep() { return static_cast<int>( mImage.step ); }
         struct _Image clone() { struct _Image ret = *this; this->mImage = ret.mImage.clone(); return *this; }
         bool empty() { return mImage.data == NULL; }
     } Image;

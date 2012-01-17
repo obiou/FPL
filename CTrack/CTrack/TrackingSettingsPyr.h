@@ -33,7 +33,7 @@ namespace CTrack {
             }
             return true;
         }
-        unsigned int GetNumLevels() { return m_vTrackingSettings.size(); }
+        unsigned int GetNumLevels() { return (unsigned int) m_vTrackingSettings.size(); }
         TrackingSettings<TrackingFunctor,MaskFunctorT>* GetTrackingSettings( unsigned int nLevel ) { 
             return nLevel >= m_vTrackingSettings.size() ? NULL : m_vTrackingSettings[nLevel]; }
         TrackBuffer* GetTrackBuffer() { return m_vTrackingSettings[0]->GetTrackBuffer(); }

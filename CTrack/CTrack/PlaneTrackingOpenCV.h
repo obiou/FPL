@@ -61,8 +61,8 @@ namespace CTrack {
     void convert( const std::vector<std::pair<double,double> >& vPolyIn,
                   CvPoint* pPts ) {
         for( size_t ii=0; ii<vPolyIn.size(); ii++ ) {
-            pPts[ii].x = vPolyIn[ii].first;
-            pPts[ii].y = vPolyIn[ii].second;
+            pPts[ii].x = static_cast<int>(vPolyIn[ii].first);
+            pPts[ii].y = static_cast<int>(vPolyIn[ii].second);
         }
     }
 }

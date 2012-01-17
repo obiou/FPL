@@ -142,7 +142,7 @@ namespace CTrack {
             break;
         case AFFINE_ILLUM:
         case AFFINE_ILLUM_REGULARISED:
-            fAlpha = 1.2; fBeta = 10.;
+            fAlpha = 1.2f; fBeta = 10.f;
             break;
         default:
             std::cout << "OpenCVHelpers: Not supported. " << std::endl;
@@ -506,8 +506,8 @@ namespace CTrack {
                 for( int jj=0; jj < (*pCurImage)->height; jj++ ) {
                     int nCoord = ii + jj*(*pCurImage)->widthStep;
                     unsigned char* pRefVal = &( (unsigned char*) (*pCurImage)->imageData)[nCoord];
-                    float fVal = 1/fAlpha * ( (*pRefVal) - fBeta );
-                    *pRefVal = fVal> 255 ? 255 : ( fVal < 0 ? 0 : char(fVal) );
+                    float fVal = 1.f/fAlpha * ( static_cast<float>(*pRefVal) - fBeta );
+                    *pRefVal = fVal> 255 ? char(255) : ( fVal < 0 ? char(0) : char(fVal) );
                 }
             }
             std::cout << "Simulation with alpha=" << fAlpha << " and beta=" << fBeta << std::endl;

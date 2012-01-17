@@ -60,9 +60,9 @@ namespace CCameraModel {
             *pWarpedPatch = (char) fTmp1 + (fYc-nFloorYc)*fTmp2 - (fYc-nFloorYc)*fTmp1;
 #else
             *pWarpedPatch = (char) ( fV00 +
-                                     (fXc-nFloorXc)*(fV10-fV00)+
-                                     (fYc-nFloorYc)*(fV01-fV00)-
-                                     (fXc-nFloorXc)*(fYc-nFloorYc)*(fV01-fV00+fV10-fV11) );
+                                     (fXc-static_cast<float>(nFloorXc))*(fV10-fV00)+
+                                     (fYc-static_cast<float>(nFloorYc))*(fV01-fV00)-
+                                     (fXc-static_cast<float>(nFloorXc))*(fYc-static_cast<float>(nFloorYc))*(fV01-fV00+fV10-fV11) );
 #endif
 
             //*pWarpedPatchMask = 1;
@@ -265,7 +265,7 @@ namespace CCameraModel {
         // Compute finite-diff Jacobians
         Derived3 mdP2Dfd( 2, nNumPoints );
         Derived3 mP2Dfd( 2, nNumPoints );
-        double dEps = 1e-4;
+        typename Eigen::internal::traits<Derived1>::Scalar dEps = 1e-4;
         Derived2 mP2DP = mP2D;
         Derived2 mP2DM = mP2D;
         { 

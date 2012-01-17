@@ -26,8 +26,8 @@ using namespace std;
 const std::string USAGE =
     "Camera calibration tool.\n"
     "Usage: ccamera_calibration\n"
-    "     -w board_width           the number of width inner corners\n"
-    "     -h board_height          the number of height inner corners\n"
+    "     [-w board_width]         the number of width inner corners\n"
+    "     [-h board_height]        the number of height inner corners\n"
     "     [-d delay]               for video, delay in ms between subsequent attempts to find the calibration grid\n"
     "     [-o params_filename]     output filename for the intrinsic camera parameters\n"
     "     [-v]                     flip the captured images around the horizontal axis\n"
@@ -37,7 +37,7 @@ const std::string USAGE =
     "                              if you do not provide a text file, a live view from the camera is used\n"
     "\n"
     "Example:\n"
-    "  ccamera_calibration -w 8 -h 5 list_views\n"
+    "  ./ccamera_calibration -w 8 -h 5 list_views\n"
     "\n";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ int main( int argc, char** argv )
     std::string sSensorID = aImageCapture.sSensorID;
     unsigned int nImageWidth = aImageCapture.mImage.cols;
     unsigned int nImageHeight = aImageCapture.mImage.rows;
-    unsigned int nImageWidthStep = aImageCapture.mImage.step;
+    size_t nImageWidthStep = aImageCapture.mImage.step;
 
     IplImage* pImUndist = cvCreateImage( cvSize( nImageWidth, nImageHeight), IPL_DEPTH_8U, 1 );
 

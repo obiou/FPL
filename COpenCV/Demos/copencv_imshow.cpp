@@ -16,7 +16,8 @@ void genSin( vector<pair<double,double> >& v, const int nNumPoints,
              const int nOffset ) {             
     for( double ii=0; ii<nNumPoints; ii++ ) {
         double dVal = nImageWidth*ii/nNumPoints;
-        v[ii] = pair<double,double>( dVal, sin(CVarUtils::GetCVar<double>( "wlength" )*2.*3.1459*(dVal+nOffset)/nImageWidth)*nImageHeight/10+nImageHeight/2 );
+        v[ii] = pair<double,double>( dVal, 
+                                     sin(CVarUtils::GetCVar<double>( "wlength" )*2.*3.1459*(dVal+(double)nOffset)/(double)nImageWidth)*(double)nImageHeight/10.+(double)nImageHeight/2. );
     }
 }
  

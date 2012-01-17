@@ -10,7 +10,7 @@
 inline double Tic() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    return  tv.tv_sec + 1e-6 * (tv.tv_usec);
+    return static_cast<double>(tv.tv_sec) + 1e-6 * static_cast<double>(tv.tv_usec);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

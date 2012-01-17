@@ -76,9 +76,9 @@ namespace CTrack {
 
         ImageHolder* GetImage() { return m_vImagePyramid.size() == 0 ? NULL : m_vImagePyramid[0]; }
         ImageHolder* GetImage( unsigned int nLevel ) { return nLevel >= m_vImagePyramid.size() ? NULL : m_vImagePyramid[nLevel]; }
-        ImageHolder* GetSmallestImage() { return GetImage( m_vImagePyramid.size()-1 ); }
+        ImageHolder* GetSmallestImage() { return GetImage( (unsigned int)m_vImagePyramid.size()-1 ); }
 
-        unsigned int GetNumLevels() { return m_vImagePyramid.size(); }
+        unsigned int GetNumLevels() { return (unsigned int)m_vImagePyramid.size(); }
 
     private:
         ImagePyramid( const ImagePyramid & );

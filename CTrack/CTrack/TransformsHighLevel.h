@@ -72,12 +72,12 @@ namespace CTrack {
 ////////////////////////////////////////////////////////////////////////////////
 // Computes p1 = p1 + dScale*p2
 namespace CTrack{
-    inline void addScaledImage( float* p1, unsigned char* p2, double dScale,
+    inline void addScaledImage( float* p1, unsigned char* p2, float fScale,
                                 const int nWidth, const int nHeight ) 
     {
         for( int y=0; y<nHeight; y++ ) {
             for( int x=0; x<nWidth; x++ ) {
-                *p1 = *p1 + dScale*(*p2);
+                *p1 = *p1 + fScale*static_cast<float>(*p2);
                 p1++;
                 p2++;
             }
@@ -128,20 +128,20 @@ void CTrack::WarpBlur( const unsigned char* pImage, ///< Input: image input
                                      std::abs(vPolyIn[ii].second - vPolyOut[ii].second) );       
     }
 
-    double dFact;
+    float fFact;
     
     if( dMaxDisplacement != 0 ) {
-        dFact = dStep/dMaxDisplacement;
+        fFact = static_cast<float>(dStep/dMaxDisplacement);
     }
     else {
-        dFact = 1;
+        fFact = 1;
     }
-    if( dFact > 1 || dFact <= 1e-100 ) {
-        dFact = 1;
+    if( fFact > 1 || fFact <= 1e-100 ) {
+        fFact = 1;
     }
 #if 0
     std::cout << "Sampling factor for blurring: " 
-              << dFact 
+              << fFact 
               << ", dStep: " << dStep
               << ", dMaxDisplacement: " << dMaxDisplacement << "."
               << std::endl;
@@ -155,18 +155,18 @@ void CTrack::WarpBlur( const unsigned char* pImage, ///< Input: image input
     // Create a buffer for storing warped images
     unsigned char pTmpWarped[ nPatchWidth*nPatchHeight ];
 
-    double dMult = 0;
+    float fMult = 0;
     Homography mH;
     Homography mExpMultM;
 
     float fNumComp = 0;
     
-    while( dMult <= 1 ) {
-        // Compute warping homography H = Hl*expm( dMult*M )*Hr
+    while( fMult <= 1 ) {
+        // Compute warping homography H = Hl*expm( fMult*M )*Hr
         mH.id();
         mH.mult( *pHl );
         mExpMultM = *pM;
-        mExpMultM.mult( dMult );
+        mExpMultM.mult( fMult );
         mExpMultM.expm();
         mH.mult( mExpMultM );
         mH.mult( *pHr );
@@ -175,7 +175,7 @@ void CTrack::WarpBlur( const unsigned char* pImage, ///< Input: image input
 
         // Compute warp for H
         Warp<>( pImage, nImageWidth, nImageHeight, nImageWidthStep,
-                mH.GetRowMajorPtr(), // Current value for dMult  
+                mH.GetRowMajorPtr(), // Current value for fMult  
                 pTmpWarped, nPatchWidth, nPatchHeight, 
                 nPatchWidth, maskFctr // working on buffer without an widthStep
                 );
@@ -183,19 +183,19 @@ void CTrack::WarpBlur( const unsigned char* pImage, ///< Input: image input
         // Compute update
         if( bJacobian ) {
             // Trapezium rule
-            if( dMult == 0 || dMult == 1 ) { 
-                addScaledImage( pTmpBlurred, pTmpWarped, 0.5*dMult,
+            if( fMult == 0 || fMult == 1 ) { 
+                addScaledImage( pTmpBlurred, pTmpWarped, 0.5f*fMult,
                                 nPatchWidth, nPatchHeight );
             } 
             else {
-                addScaledImage( pTmpBlurred, pTmpWarped, dMult,
+                addScaledImage( pTmpBlurred, pTmpWarped, fMult,
                                 nPatchWidth, nPatchHeight );
             }
         }
         else {
             // Trapezium rule
-            if( dMult == 0 || dMult + dFact > 1 ) {
-                addScaledImage( pTmpBlurred, pTmpWarped, 0.5,
+            if( fMult == 0 || fMult + fFact > 1 ) {
+                addScaledImage( pTmpBlurred, pTmpWarped, 0.5f,
                                 nPatchWidth, nPatchHeight );
             }
             else {
@@ -204,7 +204,7 @@ void CTrack::WarpBlur( const unsigned char* pImage, ///< Input: image input
             }
         }
         fNumComp++;
-        dMult += dFact;
+        fMult += fFact;
     }
     fNumComp--; // only count once for beg and end
     // Set the values in pWarpedBlurredPatch by dividing all terms in

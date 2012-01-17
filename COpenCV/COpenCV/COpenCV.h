@@ -146,9 +146,9 @@ namespace COPENCV {
                 for( int ii=0; ii < pImage1->height; ++ii, pImageData += pGlobalImage->widthStep ) {
                     unsigned char* pImage1Row = (unsigned char*)pImage1->imageData + ii * pImage1->widthStep;
                     for( int jj=0; jj<pImage1->width; jj++ ) {
-                        pImageData[jj] = ( pImage1Row[3*jj]   +
-                                           pImage1Row[3*jj+1] +
-                                           pImage1Row[3*jj+2] )/3;
+                        pImageData[jj] = static_cast<unsigned char>( ( pImage1Row[3*jj]   +
+                                                                       pImage1Row[3*jj+1] +
+                                                                       pImage1Row[3*jj+2] )/3. );
                     }
                 }
             }
@@ -198,9 +198,9 @@ namespace COPENCV {
                 for( int ii=0; ii < pImage2->height; ++ii, pImageData += pGlobalImage->widthStep ) {
                     unsigned char* pImage2Row = (unsigned char*)pImage2->imageData + ii * pImage2->widthStep;
                     for( int jj=0; jj<pImage2->width; jj++ ) {
-                        pImageData[jj] = ( pImage2Row[3*jj] +
-                                           pImage2Row[3*jj+1] +
-                                           pImage2Row[3*jj+2] )/3;
+                        pImageData[jj] = static_cast<unsigned char>( ( pImage2Row[3*jj] +
+                                                                       pImage2Row[3*jj+1] +
+                                                                       pImage2Row[3*jj+2] )/3. );
                     }
                 }
             }
@@ -292,7 +292,7 @@ namespace COPENCV {
     ////////////////////////////////////////////////////////////////////////////////
     template<class T>
         inline void pair_reader( const std::pair<T,T>& nP, int& nX, int& nY ) {
-        nX = nP.first; nY = nP.second;
+        nX = static_cast<int>(nP.first); nY = static_cast<int>(nP.second);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -389,7 +389,7 @@ namespace COPENCV {
             break;
         case '*': 
             draw_plus( pImage, nX, nY, r, g, b, nSize );
-            draw_cross( pImage, nX, nY, r, g, b, 0.71*nSize );
+            draw_cross( pImage, nX, nY, r, g, b, static_cast<int>(0.71*nSize) );
             break;
         case 's': 
             draw_square( pImage, nX, nY, r, g, b, nSize );
