@@ -36,7 +36,12 @@ namespace CCameraModel {
                           const std::string& sCameraModelPath,
                           const std::string& sSensorID,
                           bool bVerbose = false );
-
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Helper function to load a camera given a path and sensor ID
+    bool LoadCameraModel( CameraModel& cameraModel, 
+                          const std::string& sCameraModelFile,
+                          bool bVerbose = false );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

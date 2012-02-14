@@ -36,6 +36,20 @@ namespace CCameraModel {
     }
 
     ////////////////////////////////////////////////////////////////////////////
+    bool LoadCameraModel( CCameraModel::CameraModel& cameraModel, 
+                          const std::string& sCameraModelFile,
+                          bool bVerbose ) {
+        if( bVerbose ) {
+            cout << "Loading camera model from: " << sCameraModelFile << endl;
+        }
+        if( !cameraModel.load( sCameraModelFile ) ) {
+            cerr << "ERROR: problem loading camera model from file: " << sCameraModelFile << endl;
+            return false;
+        }
+        return true;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     class NoMask {
     public: 
         NoMask() {}
