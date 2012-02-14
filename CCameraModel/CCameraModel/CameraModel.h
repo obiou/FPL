@@ -20,13 +20,23 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace CCameraModel {
+    class CameraModel;
+
     ////////////////////////////////////////////////////////////////////////////
     /// Conversion function: converts to a string
     template <class T> std::string ToString( const T& param );
     
     ////////////////////////////////////////////////////////////////////////////
     /// Conversion function: converts from a string
-    template <class T> T FromString( const std::string& s );
+    template <class T> T FromString( const std::string& s );  
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Helper function to load a camera given a path and sensor ID
+    bool LoadCameraModel( CameraModel& cameraModel, 
+                          const std::string& sCameraModelPath,
+                          const std::string& sSensorID,
+                          bool bVerbose = false );
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////

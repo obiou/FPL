@@ -11,7 +11,30 @@
 #include <iostream>
 #include <sstream>
 
-namespace CCameraModel {
+using namespace std;
+
+namespace CCameraModel { 
+    ////////////////////////////////////////////////////////////////////////////
+    bool LoadCameraModel( CCameraModel::CameraModel& cameraModel, 
+                          const std::string& sCameraModelPath,
+                          const std::string& sSensorID,
+                          bool bVerbose ) {
+        stringstream oss;
+        oss << sCameraModelPath << "/" << "calibrated";
+        if( sSensorID != "" ) {
+            oss << "_" << sSensorID;
+        }
+        oss << ".txt";
+        if( bVerbose ) {
+            cout << "Loading camera model from: " << oss.str() << endl;
+        }
+        if( !cameraModel.load( oss.str() ) ) {
+            cerr << "ERROR: problem loading camera model from file: " << oss.str() << endl;
+            return false;
+        }
+        return true;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     class NoMask {
     public: 
@@ -612,21 +635,22 @@ namespace CCameraModel {
     }
 
 #  if CCAMERAMODEL_HAS_OPENCV
-        ////////////////////////////////////////////////////////////////////////
-        void CameraModel::undistort_image( const IplImage* pImageIn,
-                                           IplImage* pImageOut,
-                                           bool bRecompute ) {
-            assert( pImageIn->width == pImageOut->width );
-            assert( pImageIn->height == pImageOut->height );
-            assert( pImageIn->widthStep == pImageOut->widthStep );
-            undistort_image( pImageIn->width, pImageIn->height,
-                             pImageIn->widthStep,
-                             (const unsigned char*)pImageIn->imageData,
-                             (unsigned char*)pImageOut->imageData, bRecompute );
-        }
+    ////////////////////////////////////////////////////////////////////////
+    void CameraModel::undistort_image( const IplImage* pImageIn,
+                                       IplImage* pImageOut,
+                                       bool bRecompute ) {
+        assert( pImageIn->width == pImageOut->width );
+        assert( pImageIn->height == pImageOut->height );
+        assert( pImageIn->widthStep == pImageOut->widthStep );
+        undistort_image( pImageIn->width, pImageIn->height,
+                         pImageIn->widthStep,
+                         (const unsigned char*)pImageIn->imageData,
+                         (unsigned char*)pImageOut->imageData, bRecompute );
+    }
 #  endif
 #endif
 
+   
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

@@ -115,7 +115,13 @@ namespace CCameraSensor {
     private:
         CameraSensorInterface<>* m_pCameraSensor;
         std::string m_sCameraType;
-    }; 
+    };     
+
+    ////////////////////////////////////////////////////////////////////////////
+    bool OpenCameraSensor( CCameraSensor::CameraSensor& cameraSensor, 
+                           const bool bLive, std::string& sCameraType,
+                           const std::string& sInputFileName );
+
 }
 
 #endif

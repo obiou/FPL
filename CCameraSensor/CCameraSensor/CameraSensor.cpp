@@ -16,6 +16,8 @@
 //
 #include <CCameraSensor/CameraSensor.h>
 
+using namespace std;
+
 ////////////////////////////////////////////////////////////////////////////////
 CCameraSensor::CameraSensor::~CameraSensor() {
     if( m_pCameraSensor != NULL ) {
@@ -98,4 +100,22 @@ bool CCameraSensor::CameraSensor::has( const std::string& sKey ) {
         return false;
     }
     return m_pCameraSensor->has( sKey );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool CCameraSensor::OpenCameraSensor( CameraSensor& cameraSensor, 
+                                      const bool bLive, std::string& sCameraType,
+                                      const std::string& sInputFileName ) {   
+    if( !bLive ) {
+        sCameraType = "FileReaderFromList";
+    }
+    if( !cameraSensor.init_reset( sCameraType ) ) { return false; }
+    if( !bLive ) {
+        cameraSensor.set( "ListFileName", sInputFileName );
+    }
+    if( !cameraSensor.open() ) {
+        cerr << "Problem opening camera sensor." << endl;
+        return false;
+    }
+    return true;
 }

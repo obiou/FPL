@@ -189,7 +189,13 @@ int main( int argc, char** argv )
                 if( gridCalibrator.get_num_views() > 1 ) {
                     gridCalibrator.iterate( dRMS );
                     cout << "RMS local: " << dRMS << endl;
-                    gridCalibrator.print();
+                    if( gridCalibrator.get_num_views() > 2 ) {
+                        gridCalibrator.iterate( dRMS );
+                        cout << "RMS local: " << dRMS << endl;
+                        gridCalibrator.iterate( dRMS );
+                        cout << "RMS local: " << dRMS << endl;
+                        gridCalibrator.print();
+                    }
                 }
                 vImagePoints.push_back( mGridPoints );
                 if( bLive ) {
