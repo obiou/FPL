@@ -133,11 +133,27 @@ namespace CCameraSensor {
                         get_not_comment_line( oFile, sExtraLine ) ;
                         std::string sPar;
                         if( get_parameter( "image.sensorID", "=",
+                                           sExtraLine, sPar ) ||
+                            get_parameter( "SensorID", ":",
                                            sExtraLine, sPar ) ) {
+                            size_t nBeg = sPar.find( "\"" );
+                            if( nBeg != std::string::npos ) {
+                                sPar.erase( 0, nBeg+1 );
+                            }
+                            size_t nEnd = sPar.rfind( "\"" );
+                            if( nEnd != std::string::npos ) {
+                                sPar.erase( nEnd );
+                            }
                             m_ReadImageHolder.sSensorID = sPar;
                         }
                         else if( get_parameter( "image.cameraTime", "=",
+                                                sExtraLine, sPar ) ||
+                                 get_parameter( "CameraTime", ":",
                                                 sExtraLine, sPar ) ) {
+                            size_t nEnd = sPar.rfind( "." );
+                            if( nEnd != std::string::npos ) {
+                                sPar.erase( nEnd );
+                            }
                             std::stringstream oss; oss << sPar;
                             double dCameraTime;
                             if( oss >> dCameraTime ) {
@@ -145,7 +161,13 @@ namespace CCameraSensor {
                             }
                         }
                         else if( get_parameter( "image.time", "=",
+                                                sExtraLine, sPar ) ||
+                                 get_parameter( "SystemTime", ":",
                                                 sExtraLine, sPar ) ) {
+                            size_t nEnd = sPar.rfind( "." );
+                            if( nEnd != std::string::npos ) {
+                                sPar.erase( nEnd );
+                            }
                             std::stringstream oss; oss << sPar;
                             double dTime;
                             if( oss >> dTime ) {
