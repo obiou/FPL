@@ -34,8 +34,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#include <cv.h>
-#include <highgui.h>
+#include <opencv2/highgui/highgui.hpp>
 
 #include <sys/resource.h>
 #include <sys/time.h>

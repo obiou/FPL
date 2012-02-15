@@ -33,8 +33,8 @@
 #include <vector>
 
 #include <CTrack/PlaneTracking.h>
-#include <cv.h>
-#include <highgui.h>
+
+#include <opencv2/highgui/highgui.hpp>
 
 /// This file contains wrappers for OpenCV
 namespace CTrack {

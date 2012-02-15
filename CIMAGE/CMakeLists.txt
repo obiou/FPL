@@ -24,8 +24,7 @@ list( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
 include( "../cmake_modules/FindPackageAndAdd.cmake" ) 
 
 ################################################################################
-find_package_and_add( OPENCV CIMAGE )
-#find_package_and_add( OPENCV2 CIMAGE )
+find_package_and_add( OPENCV2 CIMAGE )
 
 ################################################################################
 add_subdirectory( cimage )

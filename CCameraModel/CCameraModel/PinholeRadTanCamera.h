@@ -7,8 +7,7 @@
 #include <CCameraModel/ProjectionFunctions.h>
 
 #ifdef CCAMERAMODEL_HAS_OPENCV
-#  include <cv.h>
-#  include <highgui.h>
+#  include <opencv2/highgui/highgui.hpp>
 #endif
 
 ///

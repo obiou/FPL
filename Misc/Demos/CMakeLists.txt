@@ -16,9 +16,9 @@ SET( INCLUDES ${INCLUDES} ${CCAMERASENSOR_INCLUDE_DIR} )
 SET( DEFINITIONS ${DEFINITIONS} ${CCAMERASENSOR_DEFINITIONS} )
 
 ################################################################################
-FIND_PACKAGE( OPENCV REQUIRED )
-SET( LIBS ${LIBS} ${OPENCV_LIBRARIES} )
-SET( INCLUDES ${INCLUDES} ${OPENCV_INCLUDE_DIR} )
+FIND_PACKAGE( OPENCV2 REQUIRED )
+SET( LIBS ${LIBS} ${OpenCV2_LIBRARIES} )
+SET( INCLUDES ${INCLUDES} ${OpenCV2_INCLUDE_DIR} )
 SET( DEFINITIONS ${DEFINITIONS} "-DHAS_OPENCV" )
 
 ################################################################################

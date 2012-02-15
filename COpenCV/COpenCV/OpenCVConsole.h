@@ -1,8 +1,7 @@
 #ifndef OPENCV_CONSOLE_H
 #define OPENCV_CONSOLE_H
 
-#include <cv.h>
-#include <highgui.h>
+#include <opencv2/highgui/highgui.hpp>
 
 #include <algorithm>
 #include <deque>
