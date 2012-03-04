@@ -22,9 +22,9 @@ SET( EXECUTABLES
 )
 
 ################################################################################
-find_package( OPENCV2 REQUIRED )
-SET( LIBS ${LIBS} ${OpenCV2_LIBRARIES} )
-SET( INCLUDE_DIRS ${INCLUDE_DIRS} ${OpenCV2_INCLUDE_DIR} )
+find_package( OPENCV REQUIRED )
+SET( LIBS ${LIBS} ${OPENCV_LIBRARIES} )
+SET( INCLUDE_DIRS ${INCLUDE_DIRS} ${OPENCV_INCLUDE_DIR} )
 
 ################################################################################
 find_package( CCAMERASENSOR REQUIRED )

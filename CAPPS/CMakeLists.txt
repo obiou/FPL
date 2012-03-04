@@ -31,7 +31,7 @@ include( "../cmake_modules/FindPackageAndAdd.cmake" )
 
 ################################################################################
 find_package_and_add( CEIGEN CAPPS )
-find_package_and_add( OPENCV2 CAPPS )
+find_package_and_add( OPENCV CAPPS )
 find_package_and_add( CGEOM CAPPS )
 find_package_and_add( CCAMERAMODEL CAPPS )
 find_package_and_add( CCAMERASENSOR CAPPS )

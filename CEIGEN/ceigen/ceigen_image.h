@@ -6,7 +6,7 @@
 #include <CEIGENIncludes.h>
 
 #if CEIGEN_HAS_OPENCV
-#  include <opencv2/highgui/highgui.hpp>
+#  include <cv.h>
 #endif
 
 namespace CEIGEN {

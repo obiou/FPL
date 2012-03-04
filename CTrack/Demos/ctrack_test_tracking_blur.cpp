@@ -7,7 +7,8 @@
 #include <stdio.h>
 #include <time.h>
 
-#include <opencv2/highgui/highgui.hpp>
+#include <cv.h>
+#include <highgui.h>
 
 #include <CTrack/PlaneTracking.h>
 #include <CTrack/PlaneTrackingOpenCV.h>

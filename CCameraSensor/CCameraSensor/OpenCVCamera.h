@@ -22,7 +22,8 @@
 #include <string>
 #include <vector>
 
-#include <opencv2/highgui/highgui.hpp>
+#include <cv.h>
+#include <highgui.h>
 
 ///
 /// This driver wraps the OpenCV capture mode.

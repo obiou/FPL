@@ -23,7 +23,8 @@
 
 #if CCAMERASENSOR_HAS_OPENCV
 
-#include <opencv2/highgui/highgui.hpp>
+#include <cv.h>
+#include <highgui.h>
 
 ///
 /// This defines the basic call made by users.

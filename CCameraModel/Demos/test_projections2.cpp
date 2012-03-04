@@ -13,9 +13,8 @@
 #include <COpenCV.h>
 #include <Misc.h>
 
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc_c.h>
-#include <opencv2/calib3d/calib3d.hpp>
+#include <cv.h>
+#include <highgui.h>
 
 //#define EIGEN_DEFAULT_TO_ROW_MAJOR 1
 #include <eigen3/Eigen/Core>

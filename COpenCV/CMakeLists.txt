@@ -13,12 +13,10 @@ LIST( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
 #MESSAGE( STATUS "" ${CMAKE_MODULE_PATH} )
 
 ################################################################################
-# Simplify adding dependencies
-include( "../cmake_modules/FindPackageAndAdd.cmake" ) 
-
-################################################################################
-# Get OpenCV2
-find_package_and_add( OPENCV2 CIMAGE )
+# Get OpenCV
+FIND_PACKAGE( OPENCV REQUIRED )
+SET( COPENCV_LIBRARIES ${COPENCV_LIBRARIES} ${OpenCV_LIBRARIES} )
+SET( COPENCV_INCLUDE_DIR ${COPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR} )
 
 ################################################################################
 FIND_PACKAGE( CVARS )

@@ -17,7 +17,8 @@
 #ifndef IMAGE_WRAPPER_H
 #define IMAGE_WRAPPER_H
 
-#include <opencv2/highgui/highgui.hpp>
+#include <cv.h>
+#include <highgui.h>
 
 #include <iostream>
 #include <string>

@@ -1,9 +1,8 @@
 #ifndef OPENCV_BASIC_H
 #define OPENCV_BASIC_H
 
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc_c.h>
-
+#include <cv.h>
+#include <highgui.h>
 #include <iomanip>
 #include <iostream>
 

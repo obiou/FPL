@@ -10,6 +10,12 @@ set( INCLUDES ${CIMAGE_INCLUDE_DIR} )
 set( DEFINITIONS ${CIMAGE_DEFINITIONS} )
 
 ################################################################################
+#find_package( OPENCV2 REQUIRED )
+#set( LIBS ${LIBS} ${OPENCV2_LIBRARIES} )
+#set( INCLUDES ${INCLUDES} ${OPENCV2_INCLUDE_DIR} )
+#set( DEFINITIONS ${DEFINITIONS} "-DHAS_OPENCV" )
+
+################################################################################
 include_directories( ${INCLUDES} )
 add_definitions( ${DEFINITIONS} )
 

@@ -1,7 +1,8 @@
 #ifndef OPENCV_HELPERS_H
 #define OPENCV_HELPERS_H
 
-#include <opencv2/highgui/highgui.hpp>
+#include <cv.h>
+#include <highgui.h>
 
 #include <iostream>
 #include <sstream>

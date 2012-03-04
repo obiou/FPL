@@ -28,7 +28,7 @@ include( "../cmake_modules/FindPackageAndAdd.cmake" )
 find_package_and_add( CEIGEN CGEOM )
 
 ################################################################################
-find_package_and_add( OPENCV2 CGEOM )
+find_package_and_add( OPENCV CGEOM )
 
 ################################################################################
 add_subdirectory( cgeom )

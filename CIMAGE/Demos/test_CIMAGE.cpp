@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-#include <opencv2/highgui/highgui.hpp>
+#include <cv.h>
+#include <highgui.h>
 
 using namespace cv;
 

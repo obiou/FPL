@@ -2,7 +2,12 @@
 #define CEIGEN_BASICS_H
 
 #include <eigen3/Eigen/Core>
+
+#include <fstream>
 #include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 namespace CEIGEN {
     ////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +85,37 @@ namespace CEIGEN {
     template<typename Derived>
         inline Derived metric_slow( const Eigen::MatrixBase<Derived>& mM ) {
         return mM.block( 0, 0, mM.rows()-1, mM.cols() ).array() / mM.row( 2 ).replicate( 2, 1 ).array();
-    } 
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    template <class Derived>
+        std::fstream& operator>>( std::fstream& fs, Eigen::MatrixBase<Derived>& mM ) {
+        typedef typename Eigen::internal::traits<Derived>::Scalar LScalar;
+        std::string sLine;
+        int nHeight=0; int nWidth;
+        std::vector<LScalar> vVals;
+        LScalar dVal;
+        while( getline(fs, sLine) ) {
+            std::stringstream ss( std::stringstream::in | std::stringstream::out );
+            ss << sLine;
+            while( ss >> dVal ) {
+                vVals.push_back( dVal );
+            }
+            if(nHeight==0) nWidth = vVals.size();
+            nHeight++;
+        }
+        if( int(vVals.size()) != nWidth*nHeight ) {
+            std::cerr << "ERROR: while reading matrix from file, missing data." << std::endl;
+            return fs;
+        }
+        mM = Derived( nHeight, nWidth );
+        for( int nRow=0; nRow<nHeight; nRow++ ) {
+            for( int nCol=0; nCol<nWidth; nCol++ ) {
+                mM( nRow, nCol ) = vVals[ nRow*nWidth + nCol ];
+            }
+        }
+        return fs;
+    }
 }
 
 #endif

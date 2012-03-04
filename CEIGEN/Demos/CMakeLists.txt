@@ -10,9 +10,9 @@ set( INCLUDES ${CEIGEN_INCLUDE_DIR} )
 set( DEFINITIONS ${CEIGEN_DEFINITIONS} )
 
 ################################################################################
-find_package( OPENCV2 REQUIRED )
-set( LIBS ${LIBS} ${OpenCV2_LIBRARIES} )
-set( INCLUDES ${INCLUDES} ${OpenCV2_INCLUDE_DIR} )
+find_package( OPENCV REQUIRED )
+set( LIBS ${LIBS} ${OPENCV_LIBRARIES} )
+set( INCLUDES ${INCLUDES} ${OPENCV_INCLUDE_DIR} )
 set( DEFINITIONS ${DEFINITIONS} "-DHAS_OPENCV" )
 
 ################################################################################

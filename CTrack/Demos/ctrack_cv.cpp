@@ -35,7 +35,8 @@
 #include <sstream>
 #include <time.h>
 
-#include <opencv2/highgui/highgui.hpp>
+#include <cv.h>
+#include <highgui.h>
 
 #include <sys/resource.h>
 #include <sys/time.h>

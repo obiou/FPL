@@ -17,7 +17,7 @@ LIST( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
 include( "../cmake_modules/FindPackageAndAdd.cmake" )
 
 ################################################################################
-find_package_and_add( OPENCV2 CCAMERAMODEL )
+find_package_and_add( OPENCV CCAMERAMODEL )
 SET( CCAMERAMODEL_HAS_OPENCV "#define CCAMERAMODEL_HAS_OPENCV 1" )
 
 find_package_and_add( Eigen3 CCAMERAMODEL )

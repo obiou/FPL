@@ -10,6 +10,12 @@ set( INCLUDES ${CGEOM_INCLUDE_DIR} )
 set( DEFINITIONS ${CGEOM_DEFINITIONS} )
 
 ################################################################################
+find_package( OPENCV REQUIRED )
+set( LIBS ${LIBS} ${OPENCV_LIBRARIES} )
+set( INCLUDES ${INCLUDES} ${OPENCV_INCLUDE_DIR} )
+set( DEFINITIONS ${DEFINITIONS} "-DHAS_OPENCV" )
+
+################################################################################
 include_directories( ${INCLUDES} )
 add_definitions( ${DEFINITIONS} )
 

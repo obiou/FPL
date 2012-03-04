@@ -16,8 +16,8 @@ LIST( APPEND CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
 include( "../cmake_modules/FindPackageAndAdd.cmake" )
 
 ################################################################################
-# Get OpenCV2
-find_package_and_add( OPENCV2 CCAMERASENSOR )
+# Get OpenCV
+find_package_and_add( OPENCV CCAMERASENSOR )
 SET( CCAMERASENSOR_HAS_OPENCV "#define CCAMERASENSOR_HAS_OPENCV 1" )
 
 ################################################################################
