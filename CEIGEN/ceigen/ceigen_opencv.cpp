@@ -2,6 +2,8 @@
 
 #include <COpenCV.h>
 
+#include <opencv2/calib3d/calib3d.hpp>
+
 ////////////////////////////////////////////////////////////////////////////////
 Eigen::MatrixXd CEIGEN::FindChessboardCorners( IplImage* pImage,
                                                const CvSize& sBoardSize,

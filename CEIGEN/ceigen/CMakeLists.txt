@@ -10,7 +10,7 @@ SET( SRCS
     )
 
 ##############################################################################
-if( OPENCV_FOUND )
+if( OPENCV2_FOUND )
     set( SRCS ${SRCS} ceigen_opencv.cpp )
 endif()
   

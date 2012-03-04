@@ -30,7 +30,9 @@
 #define _OPENCV_HELPERS_H_
 
 #include <string>
-#include <cv.h>
+
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc_c.h>
 
 #include <CTrack/Homography.h>
 #include <CTrack/Misc.h>

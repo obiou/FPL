@@ -6,14 +6,19 @@
 #include <CameraSensor.h>
 #include <ceigen.h>
 #include <COpenCV.h>
+
 #if HAS_CVARS
 #  include <CVars/CVar.h>
 #endif
+
+#include <ceigen/ceigen_opencv.h>
+
 #include <CTrack/Homography.h>
 #include <Misc.h>
 
-#include "cv.h"
-#include "highgui.h"
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc_c.h>
+#include <opencv2/calib3d/calib3d.hpp>
 
 #include <stdio.h>
 #include <string.h>

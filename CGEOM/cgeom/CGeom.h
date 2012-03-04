@@ -99,6 +99,20 @@ namespace CGEOM {
                             Eigen::Matrix3d& mHBest,
                             std::vector<short int>& vBestInlierIndeces,
                             double& dBestInlierError );
+
+    ////////////////////////////////////////////////////////////////////////////////
+    /// C++ version of 
+    /// "Fast and Globally Convergent Pose Estimation from Video Images" by Chien-Ping Lu et. al, PAMI 98
+    void objpose( const Eigen::MatrixXd& mP3D, ///<Input: 3xN matrix representing the landmarks in front of the camera
+                  const Eigen::MatrixXd& mMeas,///<Input: 3xN measurements in the normalised plane or unit sphere
+                  const int nMaxNumIters,
+                  const double dTol,
+                  const double dEpsilon,
+                  Eigen::Matrix3d& mR,///<Input/Output: initial rotation estimate, this will also contain the estimated rotation
+                  Eigen::Vector3d& vt,///Output: estimated translation
+                  int& nNumIterations,
+                  double& dObjError,
+                  bool bUseRtForInitialisation = true );
 }
 
 #endif

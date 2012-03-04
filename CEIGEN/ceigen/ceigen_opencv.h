@@ -3,7 +3,8 @@
 
 #include <eigen3/Eigen/Core>
 
-#include <cv.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc_c.h>
 
 #include <iostream>
 

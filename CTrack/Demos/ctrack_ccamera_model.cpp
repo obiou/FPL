@@ -37,8 +37,8 @@
 
 #include <CameraSensor.h>
 
-#include <cv.h>
-#include <highgui.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc_c.h>
 
 #include <sys/resource.h>
 #include <sys/time.h>
