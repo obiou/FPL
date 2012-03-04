@@ -15,6 +15,8 @@
 #include <Eigen/LU>
 #include <eigen3/Eigen/SVD>
 
+#include <CGEOMIncludes.h>
+
 using namespace Eigen;
 using namespace std;
 
@@ -24,18 +26,22 @@ using namespace CEIGEN;
 int main() {
     MatrixXd mP3D;
     MatrixXd mM2D;
-    fstream fs1( "p3d.txt", fstream::in );
+    const char* sP3D = CGEOM_SOURCE_DIR"/Tests/p3d.txt";
+    const char* sM2D = CGEOM_SOURCE_DIR"/Tests/m2d.txt";
+    fstream fs1( sP3D, fstream::in );
     if( fs1.good() ) {
         fs1 >> mP3D;
     }
     else {
+        cerr << "ERROR reading data from: " << sP3D << endl;
         return -1;
     }
-    fstream fs2( "m2d.txt", fstream::in );
+    fstream fs2( sM2D, fstream::in );
     if( fs2.good() ) {
         fs2 >> mM2D;
     }
     else {
+        cerr << "ERROR reading data from: " << sM2D << endl;
         return -1;
     }
     if( mM2D.rows() == 2 ) {

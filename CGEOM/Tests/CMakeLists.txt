@@ -2,7 +2,7 @@
 # Test executable targets
 set( TEST_EXECUTABLES
   test_homog
-#  test_objpose
+  test_objpose
 )
 
 ################################################################################

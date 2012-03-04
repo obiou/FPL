@@ -1,0 +1,6 @@
+#ifndef CGEOM_INCLUDES
+#define CGEOM_INCLUDES
+
+#define CGEOM_SOURCE_DIR "@CGEOM_SOURCE_DIR@"
+
+#endif

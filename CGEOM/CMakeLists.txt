@@ -66,6 +66,13 @@ if( "${CMAKE_BUILD_TYPE}" STREQUAL "Fast" )
 endif( "${CMAKE_BUILD_TYPE}" STREQUAL "Fast" )
 
 ################################################################################
+# Create the CGEOMIncludes.h
+SET( CGEOM_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/CGEOMIncludes.cmake.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/CGEOMIncludes.h @ONLY IMMEDIATE )
+
+
+################################################################################
 # Create the CGEOMConfig.cmake file for other cmake projects.
 CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/CGEOMConfig.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/CGEOMConfig.cmake @ONLY IMMEDIATE )
