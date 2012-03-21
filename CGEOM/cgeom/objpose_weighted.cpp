@@ -109,6 +109,25 @@ inline Eigen::Matrix3d optimal_weighted_R
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+Eigen::VectorXd compute_weights( const double dExpectedNoiseStd,
+                                 const double dError,                     
+                                 const Eigen::MatrixXd& mQ, ///<Input
+                                 const vector<Eigen::Matrix3d>& vV, ///<Input
+                                 vector<bool>& vInliers ///<Input/Output
+                                 ) {
+    const int nNumParams = 6;
+    const int nNumPoints = mQ.cols();
+    assert( nNumPoints == vV.size() );
+    vInliers.reserve( nNumPoints );
+    const int nNumInliers = accumulate( vInliers.begin(), vInliers.end(), int(0) );
+    const double dMADFact = max( min( 1., dExpectedNoiseStd/sqrt(dError/nNumInliers) ), 1/40. );
+    Eigen::VectorXd mW = Eigen::VectorXd::Ones( nNumPoints ) ;
+    mW = CEIGEN::compute_weights( calculate_residuals( mQ, vV, mW ), 
+                                  nNumParams, dMADFact, vInliers );
+    return mW;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void abskernel_weighted
 ( const Eigen::MatrixXd& mP3DNotC, 
   const vector<Eigen::Matrix3d>& vV,
@@ -123,8 +142,6 @@ void abskernel_weighted
   double& dNewError ) {
     const int nNumPoints = mP3DNotC.cols();
     const int nNumParams = 6;
-    const double dMADFact = min( 1., dExpectedNoiseStd/sqrt(dOldError/nNumInliers) );
-    //cout << "dMADFact: " << dMADFact << endl;
 
     for( int ii=0; ii<nNumPoints; ii++ ) {
         mQ.col(ii) = vV[ii] * mQ.col(ii);
@@ -135,9 +152,9 @@ void abskernel_weighted
     mQ = mR * mP3DNotC; mQ.colwise() += vt;
     dNewError = calculate_obj_space_error( mQ, vV, mW );
 
-    mW = Eigen::VectorXd::Ones( nNumPoints ); // This could be biased by distance
-    mW = CEIGEN::compute_weights( calculate_residuals( mQ, vV, mW ), 
-                                  nNumParams, dMADFact, vInliers );
+    mW = compute_weights( dExpectedNoiseStd, dOldError,
+                          mQ, vV, vInliers );
+
     nNumInliers = accumulate( vInliers.begin(), vInliers.end(), int(0) );
     // Compute error and compensate for weights to simplify
     // error 'tracking'
@@ -219,8 +236,10 @@ void CGEOM::objpose_robust
             //PRINT_MATRIX( vt );
         }
         mQ = mR * mP3DNotC; mQ.colwise() += vt;
-        mW = CEIGEN::compute_weights( calculate_residuals( mQ, vV, mW ), 
-                                      nNumParams, 1./40., vInliers );
+
+        mW = compute_weights( dExpectedNoiseStd, dOldError,
+                              mQ, vV, vInliers );
+
         nNumInliers = accumulate( vInliers.begin(), vInliers.end(), int(0) );
         vt = optimal_weighted_t( mP3DNotC, vV, mR, mW ); // 'unbiased' estimate
         //PRINT_MATRIX( vt );
