@@ -133,7 +133,6 @@ void abskernel_weighted
   const vector<Eigen::Matrix3d>& vV,
   const double dOldError,
   const double dExpectedNoiseStd,
-  int& nNumInliers, ///<Input/Output
   vector<bool>& vInliers, ///<Output
   Eigen::MatrixXd& mQ, ///<Input/Output
   Eigen::VectorXd& mW, ///<Input/Output
@@ -155,7 +154,6 @@ void abskernel_weighted
     mW = compute_weights( dExpectedNoiseStd, dOldError,
                           mQ, vV, vInliers );
 
-    nNumInliers = accumulate( vInliers.begin(), vInliers.end(), int(0) );
     // Compute error and compensate for weights to simplify
     // error 'tracking'
     double dWError = calculate_obj_space_error( mQ, vV, mW );
@@ -226,7 +224,6 @@ void CGEOM::objpose_robust
 
     nNumIterations = 0;
     double dOldError = 0.;
-    int nNumInliers = nNumPoints/2; // breaking point
 
     Eigen::MatrixXd mQ( 3, nNumPoints );
     if( bUseRForInitialisation ) {
@@ -236,11 +233,12 @@ void CGEOM::objpose_robust
             //PRINT_MATRIX( vt );
         }
         mQ = mR * mP3DNotC; mQ.colwise() += vt;
+        dOldError = 
+            calculate_obj_space_error( mQ, vV, mW );
 
         mW = compute_weights( dExpectedNoiseStd, dOldError,
                               mQ, vV, vInliers );
 
-        nNumInliers = accumulate( vInliers.begin(), vInliers.end(), int(0) );
         vt = optimal_weighted_t( mP3DNotC, vV, mR, mW ); // 'unbiased' estimate
         //PRINT_MATRIX( vt );
         mQ = mR * mP3DNotC; mQ.colwise() += vt;
@@ -254,7 +252,6 @@ void CGEOM::objpose_robust
         abskernel_weighted( mP3DNotC, vV,
                             1000.,
                             dExpectedNoiseStd,
-                            nNumInliers,
                             vInliers,
                             mQ, //input/output
                             mW, //input/output
@@ -266,7 +263,6 @@ void CGEOM::objpose_robust
     abskernel_weighted( mP3DNotC, vV,
                         dOldError,
                         dExpectedNoiseStd,
-                        nNumInliers,
                         vInliers,
                         mQ, //input/output
                         mW, //input/output
@@ -281,7 +277,6 @@ void CGEOM::objpose_robust
         abskernel_weighted( mP3DNotC, vV,
                             dOldError,
                             dExpectedNoiseStd,
-                            nNumInliers,
                             vInliers,
                             mQ, //input/output
                             mW, //input/output
