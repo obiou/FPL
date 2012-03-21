@@ -116,6 +116,17 @@ namespace CEIGEN {
         }
         return fs;
     }
+
+    ////////////////////////////////////////////////////////////////////////////     
+    double median( const Eigen::VectorXd& vSqNormE );
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// MAD: robust standard deviation estimate
+    Eigen::VectorXd compute_weights( const Eigen::VectorXd& vR,///<Input: vector of residuals
+                                     const int nNumParams,///<Input: number of parameters appearing in the estimation
+                                     const double dMADFact,///<Input: multiplicative factor applied to the MAD (default: 1, smaller values will lead to a lower acceptance threshold
+                                     std::vector<bool>& bInliers///<Output: vector of bools indicating inlier/outlir values.
+                                     );
 }
 
 #endif

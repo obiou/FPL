@@ -1,6 +1,5 @@
-#include <cgeom/objpose.h>
+#include <cgeom/CGeom.h>
 #include <ceigen.h>
-#include <Misc.h>
 
 #include <fstream>
 #include <iostream>
@@ -64,13 +63,9 @@ int main() {
     Eigen::Vector3d vt;
     int nNumIterations = 0;
     double dObjError;
-
-    cout << "Num points: " << mP3D.cols() << endl;
-    double d0 = CMISC::Tic();
     CGEOM::objpose( mP3D, mM2D,
                     nMaxNumIters, dTol, dEpsilon,
-                    mR, vt, nNumIterations, dObjError, true );
-    cout << "Time (ms): " << CMISC::TocMS( d0 ) << endl;
+                    mR, vt, nNumIterations, dObjError, false );
     cout << mR << endl;
     cout << vt << endl;
     cout << "nNumIterations: " << nNumIterations << endl;

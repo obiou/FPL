@@ -1,6 +1,5 @@
-#include <cgeom/objpose.h>
+#include <cgeom/CGeom.h>
 #include <ceigen.h>
-#include <Misc.h>
 
 #include <fstream>
 #include <iostream>
@@ -57,24 +56,29 @@ int main() {
     //cout << "mP3D: " << endl << mP3D << endl;
     //cout << "mM2D: " << endl << mM2D << endl;
 
-    const int nMaxNumIters = 30;
+    const int nMaxNumIters = 20;
     const double dTol      = 1e-5;
     const double dEpsilon  = 1e-8;
     Eigen::Matrix3d mR = Eigen::Matrix3d::Identity();
-    Eigen::Vector3d vt;
+    Eigen::Vector3d vt = Eigen::Vector3d::Zero();
     int nNumIterations = 0;
+#if 0
     double dObjError;
-
-    cout << "Num points: " << mP3D.cols() << endl;
-    double d0 = CMISC::Tic();
     CGEOM::objpose( mP3D, mM2D,
                     nMaxNumIters, dTol, dEpsilon,
-                    mR, vt, nNumIterations, dObjError, true );
-    cout << "Time (ms): " << CMISC::TocMS( d0 ) << endl;
+                    mR, vt, nNumIterations, dObjError, false );
+    cout << "dObjError: " << dObjError << endl;
+    cout << "From objpose, imgpose: " << endl;
+#endif
+    double dImgError;
+    vt(2) = 2.5;
+    CGEOM::imgpose( mP3D, mM2D,
+                    nMaxNumIters, dTol, dEpsilon,
+                    mR, vt, nNumIterations, dImgError, true );
     cout << mR << endl;
     cout << vt << endl;
     cout << "nNumIterations: " << nNumIterations << endl;
-    cout << "dObjError: " << dObjError << endl;
+    cout << "dImgError: " << dImgError << endl;
 
-    return (dObjError < 0.1) ? 0 : -1;
+    return (dImgError < 0.1) ? 0 : -1;
 }

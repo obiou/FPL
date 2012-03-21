@@ -2,6 +2,7 @@
 # Executable targets
 set( EXECUTABLES
   test_cgeom
+  test_gen_points
 )
 
 ################################################################################

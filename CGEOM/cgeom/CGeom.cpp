@@ -5,6 +5,7 @@
 #include <eigen3/Eigen/Cholesky>
 #include <Eigen/LU>
 #include <eigen3/Eigen/SVD>
+#include <eigen3/unsupported/Eigen/MatrixFunctions>
 
 #include <iostream>
 #include <tr1/random>
@@ -714,97 +715,129 @@ bool CGEOM::ransac_homography( const int nMaxNumTrials, const double dInlierThre
     }        
     std::cout << "dInlierError: " << dInlierError << std::endl;
 
-
-        
-    //std::cout << "dRMS: " << dRMS << std::endl;
-    //std::cout << "Best inlier error: " << dBestInlierError << std::endl;
-    //std::cout << "Num inliers: " << vBestInlierIndeces.size() << std::endl;
-
     return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-double calculate_obj_space_error( const Eigen::MatrixXd& mQ, 
-                                  const vector<Eigen::Matrix3d>& vV ) {
-    double dError = 0;
-    const int nNumPoints = mQ.cols();
-    Eigen::Vector3d mE;
-    for( int ii=0; ii<nNumPoints; ii++ ) {
-        mE = ( Eigen::Matrix3d::Identity() - vV[ii] )*mQ.col(ii);
-        dError += mE.transpose() * mE;
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+static void apply_update( const Eigen::VectorXd& vUpdate,
+                          Eigen::Matrix3d& mR,
+                          Eigen::Vector3d& vt
+                          ) {
+    mR *= ( CEIGEN::skew_rot<Eigen::Matrix3d>(vUpdate[0],0,0) +
+            CEIGEN::skew_rot<Eigen::Matrix3d>(0,vUpdate[1],0) +
+            CEIGEN::skew_rot<Eigen::Matrix3d>(0,0,vUpdate[2]) ).exp();
+    vt += vUpdate.segment<3>(3);
+}
+
+//////////////////////////////////////////////////////////////////////////////// 
+static void trans_proj( const Eigen::Vector3d& mP3D,
+                        const Eigen::Matrix3d& mR, 
+                        const Eigen::Vector3d& vt,
+                        Eigen::Vector2d& mTransProjP3D ) {
+    const Eigen::Vector3d mTransP3D = mR * mP3D + vt;
+    mTransProjP3D = mTransP3D.segment(0,2) / mTransP3D(2);
+}
+
+//////////////////////////////////////////////////////////////////////////////// 
+static void trans_proj( const Eigen::Vector3d& mP3D,
+                        const Eigen::Matrix3d& mR, 
+                        const Eigen::Vector3d& vt,
+                        Eigen::Vector2d& mTransProjP3D,
+                        Eigen::Matrix<double,2,6>& mdmProjP3DdRt ///<Output: Jacobian
+                        ) {
+    const int nNumParams = 6;
+    const Eigen::Vector3d mTransP3D = mR * mP3D + vt;
+    mTransProjP3D = mTransP3D.segment(0,2) / mTransP3D(2);
+#if 0
+    // Finite difference
+    Eigen::Vector2d mTransProjP3D_eps;
+    Eigen::Matrix3d mR_eps; 
+    Eigen::Vector3d vt_eps;
+    Eigen::Matrix<double,6,1> vUpdate;
+    double dEps = 1e-6;
+    for( int ii=0; ii<6; ii++ ) {
+        mR_eps = mR; vt_eps = vt;
+        vUpdate = Eigen::Matrix<double,6,1>::Zero();
+        vUpdate(ii) += dEps;
+        apply_update( vUpdate, mR_eps, vt_eps );
+        trans_proj( mP3D, mR_eps, vt_eps, mTransProjP3D_eps );
+        mdmProjP3DdRt.col(ii) << 
+            ( mTransProjP3D_eps(0) - mTransProjP3D(0) )/dEps,
+            ( mTransProjP3D_eps(1) - mTransProjP3D(1) )/dEps;            
     }
-    return dError;
+
+    //PRINT_MATRIX( mdmProjP3DdRt );
+    return;
+#endif
+
+    Eigen::Matrix<double,2,3> mdmProjdP;
+    const double dInvPz = 1./mTransP3D(2);
+    mdmProjdP << 
+        dInvPz, 0., -mTransP3D(0)*dInvPz*dInvPz,
+        0., dInvPz, -mTransP3D(1)*dInvPz*dInvPz;
+    
+    Eigen::Matrix<double,3,nNumParams> mdRtX;
+    // Rotation part
+    mdRtX.block(0,0,3,1) = mR*CEIGEN::skew_rot<Eigen::Matrix3d>(1,0,0)*mP3D;
+    mdRtX.block(0,1,3,1) = mR*CEIGEN::skew_rot<Eigen::Matrix3d>(0,1,0)*mP3D;
+    mdRtX.block(0,2,3,1) = mR*CEIGEN::skew_rot<Eigen::Matrix3d>(0,0,1)*mP3D;
+    // Translation part
+    mdRtX.block(0,3,3,3) = Eigen::Matrix3d::Identity();
+
+    mdmProjP3DdRt = mdmProjdP * mdRtX;
+    //PRINT_MATRIX( mdmProjP3DdRt );   
+    return;
+}
+
+//////////////////////////////////////////////////////////////////////////////// 
+static void compute_update_extrinsic
+( const Eigen::Matrix3d& mR, 
+  const Eigen::Vector3d& vt,
+  const Eigen::MatrixXd& m3D,
+  const Eigen::MatrixXd& mMeas,
+  const double dStabiliser,
+  Eigen::VectorXd& vUpdate, ///<Output: least-squares parameter update
+  double& dRMS,     ///<Output: reprojection error
+  double& dRMSGain, ///<Output: predicted gain from the linearisation
+  double& dGradMagn ///<Output: magnitude of the least-squares Jacobian
+  ) {
+    typedef unsigned int uint;
+    const int nNumPoints = m3D.cols();
+    assert( nNumPoints == mMeas.cols() );
+    const int nNumParams  = 6;
+    Eigen::MatrixXd mJtJ = dStabiliser*Eigen::MatrixXd::Identity( nNumParams, nNumParams );
+    Eigen::VectorXd mJte = Eigen::VectorXd::Zero( nNumParams );
+
+    dRMS = 0.;
+    Eigen::Vector2d vProj3D;
+    Eigen::Vector2d vE;
+    Eigen::Matrix<double,2,nNumParams> mdmProjP3DdRt;
+    for( int nPI = 0; nPI<nNumPoints; nPI++ ) {
+        trans_proj( m3D.col(nPI), mR, vt,
+                    vProj3D, mdmProjP3DdRt );
+        vE = vProj3D - mMeas.col(nPI).segment(0,2);
+
+        mJtJ += mdmProjP3DdRt.transpose() * mdmProjP3DdRt;
+        mJte += mdmProjP3DdRt.transpose() * vE;
+
+        dRMS += vE.transpose() * vE;
+    }
+    
+    dRMS = sqrt( dRMS/nNumPoints );
+
+    vUpdate = Eigen::VectorXd::Zero( nNumParams );
+    Eigen::JacobiSVD<Eigen::MatrixXd> svd( mJtJ + dStabiliser*Eigen::MatrixXd::Identity(mJtJ.rows(),mJtJ.cols()),
+                                           Eigen::ComputeThinU | Eigen::ComputeThinV );
+    vUpdate   = -svd.solve( mJte );
+    dRMSGain  = vUpdate.transpose() * ( vUpdate - mJte );
+    dRMSGain  = sqrt( dRMSGain / nNumPoints );
+    dGradMagn = mJte.lpNorm<Eigen::Infinity>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-inline Eigen::Vector3d optimal_t( const Eigen::MatrixXd& mP3DCentered,
-                                  const vector<Eigen::Matrix3d>& vV,
-                                  const Eigen::Matrix3d& mFactFort,
-                                  const Eigen::Matrix3d& mR ) {
-    assert( mP3DCentered.rowwise().mean()(0) > -1e-6 &&
-            mP3DCentered.rowwise().mean()(0) < 1e-6 &&
-            mP3DCentered.rowwise().mean()(1) > -1e-6 &&
-            mP3DCentered.rowwise().mean()(1) < 1e-6 );
-    Eigen::Vector3d vSumFort = Eigen::Vector3d::Zero();
-    const int nNumPoints = mP3DCentered.cols();
-    for( int ii=0; ii<nNumPoints; ii++ ) {
-        vSumFort += vV[ii] *mR*mP3DCentered.col(ii);
-    }
-    return mFactFort * vSumFort;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-/// Absolute orientation problem
-inline Eigen::Matrix3d optimal_R( const Eigen::MatrixXd& mP3DCentered,
-                                  Eigen::MatrixXd& mQ //<Input/Output
-                                  ) {
-    assert( mP3DCentered.rowwise().mean()(0) > -1e-6 &&
-            mP3DCentered.rowwise().mean()(0) < 1e-6 &&
-            mP3DCentered.rowwise().mean()(1) > -1e-6 &&
-            mP3DCentered.rowwise().mean()(1) < 1e-6 );
-
-    const int nNumPoints = mP3DCentered.cols();
-    // Center 3D points
-    Eigen::Vector3d vMeanQ = mQ.rowwise().mean();
-    mQ.colwise() -= vMeanQ;
-
-    Eigen::Matrix3d mM = Eigen::Matrix3d::Zero();
-    for( int ii=0; ii<nNumPoints; ii++ ) {
-        mM += mP3DCentered.col(ii) * mQ.col(ii).transpose();
-    }
-    Eigen::JacobiSVD<Eigen::MatrixXd> svdOfM( mM, Eigen::ComputeThinU | Eigen::ComputeThinV );
-    Eigen::Matrix3d mU = svdOfM.matrixU();
-    Eigen::Matrix3d mV = svdOfM.matrixV();
-    if( mU.diagonal().prod() < 0 ) {
-        mU.col(2) = -mU.col(2);
-    }
-    if( mV.diagonal().prod() < 0 ) {
-        mV.col(2) = -mV.col(2);
-    }
-    return mV * mU.transpose();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void abskernel( const Eigen::MatrixXd& mP3DCentered, 
-                const vector<Eigen::Matrix3d>& vV,
-                const Eigen::Matrix3d& mFactFort, 
-                Eigen::MatrixXd& mQ, ///<Input/Output
-                Eigen::Matrix3d& mR, 
-                Eigen::Vector3d& vt, 
-                double& dNewError ) {
-    const int nNumPoints = mP3DCentered.cols();
-    for( int ii=0; ii<nNumPoints; ii++ ) {
-        mQ.col(ii) = vV[ii] * mQ.col(ii);
-    }
-    mR = optimal_R( mP3DCentered, mQ );
-    vt = optimal_t( mP3DCentered, vV, mFactFort, mR );
-
-    mQ = mR * mP3DCentered; mQ.colwise() += vt;
-    dNewError = calculate_obj_space_error( mQ, vV );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void CGEOM::objpose( const Eigen::MatrixXd& mP3DNotC, ///<Input: 3xN matrix representing the landmarks in front of the camera
+void CGEOM::imgpose( const Eigen::MatrixXd& mP3D, ///<Input: 3xN matrix representing the landmarks in front of the camera
                      const Eigen::MatrixXd& mMeas,///<Input: 3xN measurements in the normalised plane or unit sphere
                      const int nMaxNumIters,
                      const double dTol,
@@ -812,89 +845,62 @@ void CGEOM::objpose( const Eigen::MatrixXd& mP3DNotC, ///<Input: 3xN matrix repr
                      Eigen::Matrix3d& mR,///<Input/Output: initial rotation estimate, this will also contain the estimated rotation
                      Eigen::Vector3d& vt,///Output: estimated translation
                      int& nNumIterations,
-                     double& dObjError,
+                     double& dImgError,
                      bool bUseRtForInitialisation ) {
-    const int nNumPoints = mP3DNotC.cols();
-    const double dNumPointsInv = 1./double(nNumPoints);
-    if( nNumPoints < 3 ) {
-        cout << "WARNING: objpose, not enough points." << endl;
+
+    const int nNumParams = 6;
+    const int nNumPoints = mP3D.cols();
+    if( nNumPoints == 0 ) {
         return;
     }
-
-    const Eigen::Matrix3d I_33 = Eigen::Matrix3d::Identity();
-    const Eigen::Matrix3d O_33 = Eigen::Matrix3d::Zero();
-    const Eigen::Vector3d O_3 = Eigen::Vector3d::Zero();
-
-    // Center 3D points
-    Eigen::MatrixXd mP3D = mP3DNotC;
-    Eigen::Vector3d vMeanP3D =
-        mP3D.rowwise().mean();
-    mP3D.colwise() -= vMeanP3D;
-
-    // Compute 'projection' matrices
-    // V_j = 
-    vector<Eigen::Matrix3d> vV; vV.reserve( nNumPoints );
-    Eigen::Vector3d vN;
-    Eigen::Matrix3d vSumV = O_33;
-    for( int ii=0; ii<nNumPoints; ii++ ) {
-        vN = mMeas.col(ii);
-        vN /= mMeas(2,ii); //could also normalise...
-        vV.push_back
-            ( ( vN*vN.transpose() )/ ( vN.transpose()*vN ) );
-        vSumV += vV.back();
+    if( !bUseRtForInitialisation ) {
+        mR = Eigen::Matrix3d::Identity();
+        vt = Eigen::Vector3d::Zero();
     }
 
-    // Compute ( I - 1/n \sum V_I )^{-1}
-    // This will be used to compute the values for the translation
-    Eigen::Matrix3d mFactFort = 
-        dNumPointsInv *( I_33 - dNumPointsInv * vSumV ).inverse();
+    double dRMS = 0, dRMSGain = 0, dGradMagn = 0;
+    double dStabiliser = 1;
+    Eigen::VectorXd vUpdate;
 
-    nNumIterations = 0;
-    double dOldError = 0.;
-    Eigen::MatrixXd mQ( 3, mP3D.cols() );
-    if( bUseRtForInitialisation ) {
-        // Compute t from R
-        vt = optimal_t( mP3D, vV, mFactFort, mR );
-        mQ = mR * mP3D; mQ.colwise() += vt;
-        dOldError = 
-            calculate_obj_space_error( mQ, vV );
+    double dPrevRMS = 0;
+    const double dRMSThresh = 1e-3;
+    const double dRMSGainThresh = 1e-10;
+
+    Eigen::Matrix3d mR_prev = mR;
+    Eigen::Vector3d vt_prev = vt;
+    double dRMSPrev;
+    compute_update_extrinsic( mR, vt, mP3D, mMeas,
+                              dStabiliser, vUpdate, dRMSPrev, 
+                              dRMSGain, dGradMagn );
+
+    for( int nIter=0; nIter<nMaxNumIters; nIter++ ) {
+ 
+        apply_update( vUpdate, mR, vt );
+        compute_update_extrinsic( mR, vt, mP3D, mMeas,
+                                  dStabiliser, vUpdate, dRMS, dRMSGain, dGradMagn );
+        //PRINT_SCALAR( dRMS );
+
+        if( dRMS < dRMSPrev ) {
+            mR_prev = mR;
+            vt_prev = vt;
+            dRMSPrev = dRMS;
+            dStabiliser /= 1.5;
+        }
+        else {
+            mR = mR_prev;
+            vt_prev = vt;
+            dStabiliser *= 2;
+            vUpdate = Eigen::VectorXd::Zero(6);
+        }
+
+        if( abs( dRMS - dPrevRMS ) < dRMSThresh &&
+            dRMSGain < dRMSGainThresh ) {
+            break;
+        }
     }
-    else {
-        mQ = mMeas;
-        abskernel( mP3D, vV, mFactFort,
-                   mQ, //input/output
-                   mR, vt, dOldError );
-        nNumIterations = 1;
-    }
 
-    double dNewError = 0;
-    abskernel( mP3D, vV, mFactFort,
-               mQ, //input/output
-               mR, vt, dNewError );
-
-    ++nNumIterations;
-
-    while( nNumIterations < nMaxNumIters &&
-           abs( (dOldError - dNewError )/dOldError ) > dTol &&
-           dNewError > dEpsilon ) {
-        dOldError = dNewError;
-
-        abskernel( mP3D, vV, mFactFort,
-                   mQ, //input/output
-                   mR, vt, dNewError );
-
-        ++nNumIterations;
-    }
-
-    dObjError = sqrt( dNewError/nNumPoints );
-
-    if( mR.diagonal().prod() < 0 ) {
-        mR = -mR; vt = -vt;
-        vt += mR*vMeanP3D; 
-    }
-    else {
-        vt -= mR*vMeanP3D; 
-    }
+    dImgError = dRMS;
+    return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

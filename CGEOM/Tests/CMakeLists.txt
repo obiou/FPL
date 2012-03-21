@@ -1,8 +1,10 @@
 ################################################################################
 # Test executable targets
 set( TEST_EXECUTABLES
-  test_homog
+#  test_homog
+#  test_imgpose
   test_objpose
+  test_objpose_robust
 )
 
 ################################################################################

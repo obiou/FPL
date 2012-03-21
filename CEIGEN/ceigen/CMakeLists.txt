@@ -5,6 +5,7 @@ INCLUDE_DIRECTORIES( ${CEIGEN_INCLUDE_DIR} )
 
 ##############################################################################
 SET( SRCS 
+    ceigen_basics.cpp
     ceigen_image.cpp
     ceigen_vision.cpp    
     )
