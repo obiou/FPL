@@ -8,6 +8,7 @@ SET( SRCS
     CGeom.cpp
     generate_scene.cpp
     objpose.cpp
+    objpose_weighted.cpp
   )
   
 ##############################################################################
