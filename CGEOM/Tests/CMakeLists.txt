@@ -6,6 +6,7 @@ set( TEST_EXECUTABLES
   test_objpose
   test_objpose_one
   test_objpose_dist
+  test_objpose_dist_robust
   test_objpose_robust
 )
 
