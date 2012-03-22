@@ -4,6 +4,8 @@ set( TEST_EXECUTABLES
 #  test_homog
 #  test_imgpose
   test_objpose
+  test_objpose_one
+  test_objpose_dist
   test_objpose_robust
 )
 

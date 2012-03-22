@@ -4,7 +4,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <numeric>
 #include <queue>
 #include <sstream>
 #include <string>
@@ -56,37 +55,28 @@ int main() {
     }
 
     //cout << "mP3D: " << endl << mP3D << endl;
+    //cout << "mM2D: " << endl << mM2D << endl;
 
-    const int nMaxNumIters = 50;
+    const int nMaxNumIters = 30;
     const double dTol      = 1e-5;
     const double dEpsilon  = 1e-8;
     const double dExpectedNoiseStd = 2./800.;
+
     Eigen::Matrix3d mR = Eigen::Matrix3d::Identity();
-    Eigen::Vector3d vt = Eigen::Vector3d::Zero();
+    Eigen::Vector3d vt;
     int nNumIterations = 0;
     double dObjError;
-
-    // Add outliers
-    const int nNumOuliers = 5;
-    Eigen::Vector3d mAdd = 10 * Eigen::VectorXd::Ones(3);
-    mAdd(2) = 0;
-    for( int ii=0; ii<nNumOuliers; ii++ ) {
-        mM2D.col(ii) = mM2D.col(ii) + mAdd;
-    }
-    //cout << "mM2D: " << endl << mM2D << endl;
 
     vector<bool> vInliers( mP3D.cols(), false );
     cout << "Num points: " << mP3D.cols() << endl;
     double d0 = CMISC::Tic();
-    CGEOM::objpose_weighted<CGEOM::TukeyWeights>
+    CGEOM::objpose_weighted<CGEOM::OneWeights>
         ( mP3D, mM2D,
           nMaxNumIters, dTol, dEpsilon,
           dExpectedNoiseStd,
           mR, vt, nNumIterations, dObjError, 
           vInliers, true, false );
     cout << "Time (ms): " << CMISC::TocMS( d0 ) << endl;
-    cout << "Number of inliers: " << 
-        accumulate( vInliers.begin(), vInliers.end(), int(0) ) << endl;
     cout << mR << endl;
     cout << vt << endl;
     cout << "nNumIterations: " << nNumIterations << endl;

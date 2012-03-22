@@ -109,6 +109,19 @@ inline Eigen::Matrix3d optimal_weighted_R
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+Eigen::VectorXd CGEOM::OneWeights::operator()
+    ( const double,
+      const double,                     
+      const Eigen::MatrixXd& mQ, ///<Input
+      const vector<Eigen::Matrix3d>&, ///<Input
+      vector<bool>& ///<Input/Output
+      ) const {
+    const int nNumPoints = mQ.cols();
+    Eigen::VectorXd mW = Eigen::VectorXd::Ones( nNumPoints );
+    return mW;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 Eigen::VectorXd CGEOM::TukeyWeights::operator()
     ( const double dExpectedNoiseStd,
       const double dError,                     
@@ -122,7 +135,46 @@ Eigen::VectorXd CGEOM::TukeyWeights::operator()
     vInliers.reserve( nNumPoints );
     const int nNumInliers = accumulate( vInliers.begin(), vInliers.end(), int(0) );
     const double dMADFact = max( min( 1., dExpectedNoiseStd/sqrt(dError/nNumInliers) ), 1/40. );
-    Eigen::VectorXd mW = Eigen::VectorXd::Ones( nNumPoints ) ;
+    Eigen::VectorXd mW = Eigen::VectorXd::Ones( nNumPoints );
+    mW = CEIGEN::compute_weights( calculate_residuals( mQ, vV, mW ), 
+                                  nNumParams, dMADFact, vInliers );
+    return mW;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+Eigen::VectorXd CGEOM::InvSqDistWeights::operator()
+    ( const double /*dExpectedNoiseStd*/,
+      const double /*dError*/,                     
+      const Eigen::MatrixXd& mQ, ///<Input
+      const vector<Eigen::Matrix3d>& /*vV*/, ///<Input
+      vector<bool>& /*vInliers*/ ///<Input/Output
+      ) const {
+    const int nNumPoints = mQ.cols();
+    Eigen::VectorXd mW( nNumPoints );
+    for( int ii=0; ii<nNumPoints; ii++ ) {
+        mW(ii) = 1/mQ.col(ii).squaredNorm();
+    }
+    return mW;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+Eigen::VectorXd CGEOM::TukeyInvSqDistWeights::operator()
+    ( const double dExpectedNoiseStd,
+      const double dError,                     
+      const Eigen::MatrixXd& mQ, ///<Input
+      const vector<Eigen::Matrix3d>& vV, ///<Input
+      vector<bool>& vInliers ///<Input/Output
+      ) const {
+    const int nNumParams = 6;
+    const int nNumPoints = mQ.cols();
+    assert( nNumPoints == vV.size() );
+    vInliers.reserve( nNumPoints );
+    const int nNumInliers = accumulate( vInliers.begin(), vInliers.end(), int(0) );
+    const double dMADFact = max( min( 1., dExpectedNoiseStd/sqrt(dError/nNumInliers) ), 1/40. );
+    Eigen::VectorXd mW( nNumPoints ) ;
+    for( int ii=0; ii<nNumPoints; ii++ ) {
+        mW(ii) = 1/mQ.col(ii).squaredNorm();
+    }
     mW = CEIGEN::compute_weights( calculate_residuals( mQ, vV, mW ), 
                                   nNumParams, dMADFact, vInliers );
     return mW;
@@ -315,27 +367,12 @@ void CGEOM::objpose_weighted
                                   double& dObjError,                    \
                                   vector<bool>& vInliers,               \
                                   bool bUseRForInitialisation,          \
-                                  bool bUsetForInitialisation );        \
+                                  bool bUsetForInitialisation );        
 
-#if 0
-    template                                                            \
-    void CGEOM::objpose_weighted( const Eigen::MatrixXd&,               \
-                                  const Eigen::MatrixXd&,               \
-                                  const int nMaxNumIters,               \
-                                  const double dTol,                    \
-                                  const double dEpsilon,                \
-                                  const double dExpectedNoiseStd,       \
-                                  Eigen::Matrix3d& mR,                  \
-                                  Eigen::Vector3d& vt,                  \
-                                  int& nNumIterations,                  \
-                                  double& dObjError,                    \
-                                  vector<bool>& vInliers,               \
-                                  bool bUseRForInitialisation,          \
-                                  bool bUsetForInitialisation );
-#endif
-
+INSTANTIATE( OneWeights );
 INSTANTIATE( TukeyWeights );
-
+INSTANTIATE( InvSqDistWeights );
+INSTANTIATE( TukeyInvSqDistWeights );
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

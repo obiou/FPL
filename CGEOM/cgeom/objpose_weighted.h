@@ -10,7 +10,45 @@
 
 namespace CGEOM {
     ////////////////////////////////////////////////////////////////////////////
+    /// Weights are set at 1. Should produce the same
+    /// output as standard objpose.
+    class OneWeights {
+    public:
+        Eigen::VectorXd operator()( const double,
+                                    const double,                     
+                                    const Eigen::MatrixXd& mQ, ///<Input
+                                    const std::vector<Eigen::Matrix3d>&, ///<Input
+                                    std::vector<bool>& ///<Input/Output
+                                    ) const;
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Basic robust cost function *without* inverse depths weighting
     class TukeyWeights {
+    public:
+        Eigen::VectorXd operator()( const double dExpectedNoiseStd,
+                                    const double dError,                     
+                                    const Eigen::MatrixXd& mQ, ///<Input
+                                    const std::vector<Eigen::Matrix3d>& vV, ///<Input
+                                    std::vector<bool>& vInliers ///<Input/Output
+                                    ) const;
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Inverse depth weighting (to avoid scene depth bias)
+    class InvSqDistWeights {
+    public:
+        Eigen::VectorXd operator()( const double dExpectedNoiseStd,
+                                    const double dError,                     
+                                    const Eigen::MatrixXd& mQ, ///<Input
+                                    const std::vector<Eigen::Matrix3d>& vV, ///<Input
+                                    std::vector<bool>& vInliers ///<Input/Output
+                                    ) const;
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Robust cost function combined *with* inverse depth weighting
+    class TukeyInvSqDistWeights {
     public:
         Eigen::VectorXd operator()( const double dExpectedNoiseStd,
                                     const double dError,                     
