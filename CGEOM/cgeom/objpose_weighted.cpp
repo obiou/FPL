@@ -1,4 +1,4 @@
-#include <cgeom/objpose.h>
+#include <cgeom/objpose_weighted.h>
 
 #include <ceigen.h>
 
@@ -109,12 +109,13 @@ inline Eigen::Matrix3d optimal_weighted_R
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Eigen::VectorXd compute_weights( const double dExpectedNoiseStd,
-                                 const double dError,                     
-                                 const Eigen::MatrixXd& mQ, ///<Input
-                                 const vector<Eigen::Matrix3d>& vV, ///<Input
-                                 vector<bool>& vInliers ///<Input/Output
-                                 ) {
+Eigen::VectorXd CGEOM::TukeyWeights::operator()
+    ( const double dExpectedNoiseStd,
+      const double dError,                     
+      const Eigen::MatrixXd& mQ, ///<Input
+      const vector<Eigen::Matrix3d>& vV, ///<Input
+      vector<bool>& vInliers ///<Input/Output
+      ) const {
     const int nNumParams = 6;
     const int nNumPoints = mQ.cols();
     assert( nNumPoints == vV.size() );
@@ -128,11 +129,13 @@ Eigen::VectorXd compute_weights( const double dExpectedNoiseStd,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+template<class WeightFunc>
 void abskernel_weighted
 ( const Eigen::MatrixXd& mP3DNotC, 
   const vector<Eigen::Matrix3d>& vV,
   const double dOldError,
   const double dExpectedNoiseStd,
+  const WeightFunc& weight_func,
   vector<bool>& vInliers, ///<Output
   Eigen::MatrixXd& mQ, ///<Input/Output
   Eigen::VectorXd& mW, ///<Input/Output
@@ -151,8 +154,8 @@ void abskernel_weighted
     mQ = mR * mP3DNotC; mQ.colwise() += vt;
     dNewError = calculate_obj_space_error( mQ, vV, mW );
 
-    mW = compute_weights( dExpectedNoiseStd, dOldError,
-                          mQ, vV, vInliers );
+    mW = weight_func( dExpectedNoiseStd, dOldError,
+                      mQ, vV, vInliers );
 
     // Compute error and compensate for weights to simplify
     // error 'tracking'
@@ -164,13 +167,15 @@ void abskernel_weighted
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void CGEOM::objpose_robust
+template<class WeightFunc>
+void CGEOM::objpose_weighted
 ( const Eigen::MatrixXd& mP3DNotC, ///<Input: 3xN matrix representing the landmarks in front of the camera
   const Eigen::MatrixXd& mMeas,///<Input: 3xN measurements in the normalised plane or unit sphere
   const int nMaxNumIters,
   const double dTol,
   const double dEpsilon,
   const double dExpectedNoiseStd,
+  const WeightFunc& weight_func,
   Eigen::Matrix3d& mR,///<Input/Output: initial rotation estimate, this will also contain the estimated rotation
   Eigen::Vector3d& vt,///Output: estimated translation
   int& nNumIterations,
@@ -221,7 +226,6 @@ void CGEOM::objpose_robust
         return;
     }
 
-
     nNumIterations = 0;
     double dOldError = 0.;
 
@@ -236,8 +240,8 @@ void CGEOM::objpose_robust
         dOldError = 
             calculate_obj_space_error( mQ, vV, mW );
 
-        mW = compute_weights( dExpectedNoiseStd, dOldError,
-                              mQ, vV, vInliers );
+        mW = weight_func( dExpectedNoiseStd, dOldError,
+                          mQ, vV, vInliers );
 
         vt = optimal_weighted_t( mP3DNotC, vV, mR, mW ); // 'unbiased' estimate
         //PRINT_MATRIX( vt );
@@ -252,6 +256,7 @@ void CGEOM::objpose_robust
         abskernel_weighted( mP3DNotC, vV,
                             1000.,
                             dExpectedNoiseStd,
+                            weight_func,
                             vInliers,
                             mQ, //input/output
                             mW, //input/output
@@ -263,6 +268,7 @@ void CGEOM::objpose_robust
     abskernel_weighted( mP3DNotC, vV,
                         dOldError,
                         dExpectedNoiseStd,
+                        weight_func,
                         vInliers,
                         mQ, //input/output
                         mW, //input/output
@@ -277,6 +283,7 @@ void CGEOM::objpose_robust
         abskernel_weighted( mP3DNotC, vV,
                             dOldError,
                             dExpectedNoiseStd,
+                            weight_func,
                             vInliers,
                             mQ, //input/output
                             mW, //input/output
@@ -291,6 +298,44 @@ void CGEOM::objpose_robust
         mR = -mR; vt = -vt;
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+#define INSTANTIATE( T ) \
+    template                                                            \
+    void CGEOM::objpose_weighted( const Eigen::MatrixXd&,               \
+                                  const Eigen::MatrixXd&,               \
+                                  const int nMaxNumIters,               \
+                                  const double dTol,                    \
+                                  const double dEpsilon,                \
+                                  const double dExpectedNoiseStd,       \
+                                  const T& weight_func,                 \
+                                  Eigen::Matrix3d& mR,                  \
+                                  Eigen::Vector3d& vt,                  \
+                                  int& nNumIterations,                  \
+                                  double& dObjError,                    \
+                                  vector<bool>& vInliers,               \
+                                  bool bUseRForInitialisation,          \
+                                  bool bUsetForInitialisation );        \
+
+#if 0
+    template                                                            \
+    void CGEOM::objpose_weighted( const Eigen::MatrixXd&,               \
+                                  const Eigen::MatrixXd&,               \
+                                  const int nMaxNumIters,               \
+                                  const double dTol,                    \
+                                  const double dEpsilon,                \
+                                  const double dExpectedNoiseStd,       \
+                                  Eigen::Matrix3d& mR,                  \
+                                  Eigen::Vector3d& vt,                  \
+                                  int& nNumIterations,                  \
+                                  double& dObjError,                    \
+                                  vector<bool>& vInliers,               \
+                                  bool bUseRForInitialisation,          \
+                                  bool bUsetForInitialisation );
+#endif
+
+INSTANTIATE( TukeyWeights );
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,7 @@
 #include <cgeom/CGeom.h>
 #include <cgeom/generate_scene.h>
 #include <cgeom/objpose.h>
+#include <cgeom/objpose_weighted.h>
 
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/LU>
@@ -95,7 +96,7 @@ int main( int /*argv*/, char** /*argc*/ ) {
     const double dExpectedNoiseStd = 2./800.;
     vector<bool> vInliers( mP3D.cols(), false );
 
-    CGEOM::objpose_robust
+    CGEOM::objpose_weighted<CGEOM::TukeyWeights>
         ( mP3D, mMeasNP,
           nMaxNumIters, dTol, dEpsilon,
           dExpectedNoiseStd,

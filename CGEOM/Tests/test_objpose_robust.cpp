@@ -1,4 +1,4 @@
-#include <cgeom/objpose.h>
+#include <cgeom/objpose_weighted.h>
 #include <ceigen.h>
 #include <Misc.h>
 
@@ -78,12 +78,13 @@ int main() {
     vector<bool> vInliers( mP3D.cols(), false );
     cout << "Num points: " << mP3D.cols() << endl;
     double d0 = CMISC::Tic();
-    CGEOM::objpose_robust( mP3D, mM2D,
-                           nMaxNumIters, dTol, dEpsilon,
-                           dExpectedNoiseStd,
-                           mR, vt, nNumIterations, dObjError, 
-                           vInliers,
-                           true, false );
+    CGEOM::objpose_weighted<CGEOM::TukeyWeights>
+        ( mP3D, mM2D,
+          nMaxNumIters, dTol, dEpsilon,
+          dExpectedNoiseStd,
+          mR, vt, nNumIterations, dObjError, 
+          vInliers,
+          true, false );
     cout << "Time (ms): " << CMISC::TocMS( d0 ) << endl;
     cout << "Number of inliers: " << 
         accumulate( vInliers.begin(), vInliers.end(), int(0) ) << endl;

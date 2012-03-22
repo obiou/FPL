@@ -16,6 +16,7 @@ SET( HDRS
     CGeom.h
     generate_scene.h
     objpose.h
+    objpose_weighted.h
   )
 
 ##############################################################################
