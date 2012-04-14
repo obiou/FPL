@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+#define PRINT_MATRIX( M ) std::cout << #M << ": " << std::endl << M << std::endl;
+#define PRINT_SCALAR( M ) std::cout << #M << ": " << M << std::endl;
+
 namespace CEIGEN {
     ////////////////////////////////////////////////////////////////////////////////
     /// Adds a row of ones to the matrix

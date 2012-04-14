@@ -3,6 +3,8 @@
 set( EXECUTABLES
   test_cgeom
   test_gen_points
+  sim_depth_ratio
+  sim_robustness
 )
 
 ################################################################################

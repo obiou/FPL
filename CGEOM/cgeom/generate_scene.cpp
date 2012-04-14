@@ -126,9 +126,9 @@ bool CGEOM::generate_scene_trans
     const double drotz = rand_range_d( -45., 45. )*3.14159/180.; 
 #if 1
     mR = 
-        ( CEIGEN::skew_rot<Eigen::Matrix3d>( drotx, 0., 0. ) +
-          CEIGEN::skew_rot<Eigen::Matrix3d>( 0., droty , 0.) +
-          CEIGEN::skew_rot<Eigen::Matrix3d>( 0., 0., drotz ) ).exp();
+        ( CEIGEN::skew_rot<Eigen::Matrix3d,double>( drotx, 0., 0. ) +
+          CEIGEN::skew_rot<Eigen::Matrix3d,double>( 0., droty , 0.) +
+          CEIGEN::skew_rot<Eigen::Matrix3d,double>( 0., 0., drotz ) ).exp();
 #else
     mR = Eigen::Matrix3d::Identity();
 #endif
