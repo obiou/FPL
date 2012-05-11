@@ -44,7 +44,8 @@ int main()
 
     int nKey = 0;
     Image aImage = cameraSensor.read();
-    std::cout << "SensorID: " << aImage.sSensorID << std::endl;
+    std::cout << "SensorID: " << 
+        aImage.Map.GetProperty( "SensorID", "" ) << std::endl;
 
     while( !aImage.empty() && (char)nKey != 32 ) {
         fig.imshow( aImage );

@@ -91,14 +91,14 @@ bool CCameraSensor::OpenCVCamera::read( std::vector<ImageWrapper::Image>& vImage
         std::cerr << "ERROR: in OpenCVCamera::read(), m_pCapturedImage == NULL." << std::endl;
         return false;
     }
-    m_ReadImageHolder.mImage = m_pCapturedImage;
-    m_ReadImageHolder.dCameraTime = 0;
+    m_ReadImageHolder.Image = m_pCapturedImage;
+    m_ReadImageHolder.Map.SetProperty( "CameraTime", 0. );
 #if 0
     m_ReadImageHolder.dCameraTime =
         ( cvGetCaptureProperty( m_pCvCapture, CV_CAP_PROP_POS_MSEC )*1e3 );
 #endif
-    m_ReadImageHolder.dSystemTime = 0; // Unclear how to get the correct time
-    m_ReadImageHolder.sSensorID = m_sSensorID;
+    m_ReadImageHolder.Map.SetProperty( "SystemTime", 0 ); // Unclear how to get the correct time
+    m_ReadImageHolder.Map.SetProperty( "SensorID", "" );
 
     vImages.push_back( m_ReadImageHolder );
 #if 0

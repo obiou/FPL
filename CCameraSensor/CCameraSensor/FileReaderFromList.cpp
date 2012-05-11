@@ -111,6 +111,10 @@ namespace CCameraSensor {
                 cvReleaseImage( &m_pCapturedImage );
                 m_pCapturedImage = NULL;
             }
+
+            m_ReadImageHolder.read( sLine.c_str(), true, CV_LOAD_IMAGE_UNCHANGED );
+
+#if 0
             m_pCapturedImage = cvLoadImage( sLine.c_str(), CV_LOAD_IMAGE_UNCHANGED );
             if( m_pCapturedImage == NULL ) {
                 return false;
@@ -177,7 +181,7 @@ namespace CCameraSensor {
                     oFile.close();
                 }
             }
-
+#endif
             vImages.push_back( m_ReadImageHolder );
             return true;
         }

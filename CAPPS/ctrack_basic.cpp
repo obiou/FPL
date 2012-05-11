@@ -119,7 +119,7 @@ bool GetBoxToTrack( CCameraSensor::CameraSensor& cameraSensor,
     ImageWrapper::Image aImageCapture;
     IplImage *pImage;
     while( !( aImageCapture = cameraSensor.read() ).empty() && !bGotBox ) {
-        IplImage aI = aImageCapture.mImage;
+        IplImage aI = aImageCapture.Image;
         pImage = &aI;
       
         int c = cvWaitKey( 10 );
@@ -321,7 +321,7 @@ bool Tracking( CCameraSensor::CameraSensor& cameraSensor ) {
 
     // Track
     while( !( aImageCapture = cameraSensor.read() ).empty() ){
-        IplImage aI = aImageCapture.mImage;
+        IplImage aI = aImageCapture.Image;
         IplImage *pImage = &aI;
             
         if( pImage->depth != 8 ) {

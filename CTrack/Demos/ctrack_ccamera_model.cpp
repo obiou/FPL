@@ -124,7 +124,7 @@ bool GetBoxToTrack( CameraSensor& cameraSensor,
     Image aImageCapture = cameraSensor.read();
     if( aImageCapture.empty() ) { return false; }
 
-    IplImage aI = aImageCapture.mImage;
+    IplImage aI = aImageCapture.Image;
     pImage = &aI;
 
     while( !bGotBox ) {
@@ -134,7 +134,7 @@ bool GetBoxToTrack( CameraSensor& cameraSensor,
 
         aImageCapture = cameraSensor.read();
         if( aImageCapture.empty() ) { return false; }
-        aI = aImageCapture.mImage;
+        aI = aImageCapture.Image;
         pImage = &aI;
 
         if( !bFirstPoint && !bGotBox ) { // Draw intermediate box
@@ -186,7 +186,7 @@ bool CropBoxToTrack( CameraSensor& cameraSensor,
 {
     Image aImageCapture = cameraSensor.read();
     if( aImageCapture.empty() ) { return false; }
-    IplImage aI = aImageCapture.mImage;
+    IplImage aI = aImageCapture.Image;
     IplImage* pImage = &aI;
 
     int nWidth  = pImage->width;
@@ -234,11 +234,11 @@ int main( int argc, char** argv )
         return -1;
     }
 
-    std::string sSensorID = aImageCapture.sSensorID;
+    std::string sSensorID = aImageCapture.Map.GetProperty( "SensorID", "" );
     std::cout << "SensorID: " << sSensorID << std::endl;
-    unsigned int nImageWidth = aImageCapture.mImage.cols;
-    unsigned int nImageHeight = aImageCapture.mImage.rows;
-    unsigned int nImageWidthStep = (unsigned int)aImageCapture.mImage.step;
+    unsigned int nImageWidth = aImageCapture.Image.cols;
+    unsigned int nImageHeight = aImageCapture.Image.rows;
+    unsigned int nImageWidthStep = (unsigned int)aImageCapture.Image.step;
 
     ////////////////////////////////////////////////////////
     IplImage* pRefImage = NULL;
@@ -391,7 +391,7 @@ int main( int argc, char** argv )
     ////////////////////////////////////////////////////////
     // Track
     while( !( aImageCapture = cameraSensor.read() ).empty() ) {
-        IplImage aI = aImageCapture.mImage;
+        IplImage aI = aImageCapture.Image;
         pCapturedImage = &aI;
             
         if( pCapturedImage->depth != 8 ) {

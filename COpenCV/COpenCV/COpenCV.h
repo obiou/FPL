@@ -572,7 +572,7 @@ namespace COPENCV {
 #if COPENCV_HAS_CIMAGE
         ////////////////////////////////////////////////////
         void imshow( const ImageWrapper::Image& mImage ) { 
-            imshow( mImage.mImage );
+            imshow( mImage.Image );
         }
 #endif
         ////////////////////////////////////////////////////
@@ -628,7 +628,7 @@ namespace COPENCV {
         void imshow2( const ImageWrapper::Image& mImage1,
                       const ImageWrapper::Image& mImage2,
                       const bool bHorizontal = true ) {
-            imshow2( mImage1.mImage, mImage2.mImage, bHorizontal );
+            imshow2( mImage1.Image, mImage2.Image, bHorizontal );
         }
 #endif
         ////////////////////////////////////////////////////

@@ -17,10 +17,13 @@ int main() {
 
     ImageWrapper::Image write_image;
     cv::Mat I( 10, 10, CV_8U, &v[0] );
-    write_image.mImage = I;
-    write_image.sSensorID = "ACamera";
-    write_image.dCameraTime = 123456;
-    write_image.dSystemTime = 654321;
+    write_image.Image = I;
+    const string sSensorID = "ACamera";
+    const double dCameraTime = 123456;
+    const double dSystemTime = 654321;
+    write_image.Map.SetProperty( "SensorID", "ACamera" );
+    write_image.Map.SetProperty( "CameraTime", 123456 );
+    write_image.Map.SetProperty( "SystemTime", 654321 );
 
     ImageWrapper::imwrite( "test_read_write_im.png", "test_read_write_im.txt", write_image );
 
@@ -28,10 +31,10 @@ int main() {
 
     read_image = ImageWrapper::imread( "test_read_write_im.png", "test_read_write_im.txt", -1 );
 
-    if( read_image.sSensorID == write_image.sSensorID &&
-        read_image.dCameraTime == write_image.dCameraTime &&
-        read_image.dSystemTime == write_image.dSystemTime &&
-        cv::sum(cv::abs( write_image.mImage - read_image.mImage))[0] == 0) {
+    if( read_image.Map.GetProperty( "SensorID", "" ) == sSensorID &&
+        read_image.Map.GetProperty( "CameraTime", 0. ) == dCameraTime &&
+        read_image.Map.GetProperty( "SystemTime", 0. ) == dSystemTime &&
+        cv::sum(cv::abs( write_image.Image - read_image.Image))[0] == 0) {
         return 0;
     }
     else {

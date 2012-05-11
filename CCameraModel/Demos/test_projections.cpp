@@ -188,8 +188,8 @@ void projectCmp( T* in1, T*  in2, T*  in3, T* out1, T* out2, const int num )
         MatrixXd mP3D(3,nNumPoints);
         mP3D = Map<MatrixXd>( in, 3, nNumPoints );
         MatrixXd mP2D(2,nNumPoints);
-        Matrix3d mR = Matrix3d::Identity();
-        Vector3d mt = Vector3d::Zero();
+        //Matrix3d mR = Matrix3d::Identity();
+        //Vector3d mt = Vector3d::Zero();
 
         MatrixXd mdP2DE( 2, 3*nNumPoints );
         MatrixXd mdP2DI( 2, cameraModel.get_num_parameters()*nNumPoints );

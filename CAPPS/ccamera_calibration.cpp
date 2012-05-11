@@ -141,10 +141,10 @@ int main( int argc, char** argv )
         cerr << "ERROR: problem capturing image from sensor, quitting..." << endl;
         return -1;
     }
-    std::string sSensorID = aImageCapture.sSensorID;
-    unsigned int nImageWidth = aImageCapture.mImage.cols;
-    unsigned int nImageHeight = aImageCapture.mImage.rows;
-    size_t nImageWidthStep = aImageCapture.mImage.step;
+    std::string sSensorID     = aImageCapture.Map.GetProperty( "SensorID", "" );
+    unsigned int nImageWidth  = aImageCapture.Image.cols;
+    unsigned int nImageHeight = aImageCapture.Image.rows;
+    size_t nImageWidthStep    = aImageCapture.Image.step;
 
     IplImage* pImUndist = cvCreateImage( cvSize( nImageWidth, nImageHeight), IPL_DEPTH_8U, 1 );
 
@@ -167,7 +167,7 @@ int main( int argc, char** argv )
     double dRMS = 0;
     while( !( aImageCapture = cameraSensor.read() ).empty() ) {
         //std::cout << "LastReadFile: " << cameraSensor.get( "LastReadFile" ) << std::endl;
-        IplImage aI = aImageCapture.mImage;
+        IplImage aI = aImageCapture.Image;
         IplImage *pImage = &aI;
         bool bFound = false;
         CvPoint text_origin;

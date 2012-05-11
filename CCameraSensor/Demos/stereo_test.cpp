@@ -51,8 +51,10 @@ int main()
     int nKey = 0;
     Image aImage1 = cameraSensor1.read();
     Image aImage2 = cameraSensor2.read();
-    std::cout << "SensorID: " << aImage1.sSensorID << std::endl;
-    std::cout << "SensorID: " << aImage2.sSensorID << std::endl;
+    std::cout << "SensorID: " << 
+        aImage1.Map.GetProperty( "SensorID", "" ) << std::endl;
+    std::cout << "SensorID: " << 
+        aImage2.Map.GetProperty( "SensorID", "" ) << std::endl;
 
     bool bBlock = false;
 

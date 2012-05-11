@@ -59,7 +59,7 @@ int main( int argc, char** argv )
         cerr << "Got empty image." << endl;
         return -1;
     }
-    std::cout << "SensorID: " << aImage.sSensorID << std::endl;
+    std::cout << "SensorID: " << aImage.Map.GetProperty( "SensorID", "" ) << std::endl;
 
     while( !aImage.empty() && nKey != 27 ) {
         fig.imshow( aImage );

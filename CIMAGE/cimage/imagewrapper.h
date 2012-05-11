@@ -23,87 +23,256 @@
 #include <string>
 
 namespace ImageWrapper {
-    typedef struct _Image {
-        cv::Mat mImage; // OpenCV image
-        double dSystemTime; /// System time at which the image was taken (often estimated) in micro-seconds.
-        double dCameraTime; /// Time on the camera device at which the image was taken (often more precise) in micro-seconds.
-        std::string sSensorID;    /// Unique camera identifier. 
-        int width() { return mImage.cols; }
-        int height() { return mImage.rows; }
-        int widthStep() { return static_cast<int>( mImage.step ); }
-        struct _Image clone() { struct _Image ret = *this; this->mImage = ret.mImage.clone(); return *this; }
-        bool empty() { return mImage.data == NULL; }
-    } Image;
+    class PropertyMap {
+    public:
+        ////////////////////////////////////////////////////////////////////////
+        std::string GetProperty( const std::string& sPropertyName,
+                                 const std::string& sDefaultValue = ""
+                                 ) {
+            std::map<std::string,std::string>::iterator it;
+            it = m_mPropertyMap.find( sPropertyName );
+            if( it == m_mPropertyMap.end() ){
+                return sDefaultValue; 
+            }
+            return it->second;
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        template <class T> T GetProperty( const std::string& sPropertyName,
+                                          const T& tDefaultValue = T()
+                                          ) {
+            std::map<std::string,std::string>::iterator it;
+            it = m_mPropertyMap.find( sPropertyName );
+            if( it == m_mPropertyMap.end() ){
+                return tDefaultValue; 
+            }
+            T t; StrToVal( t, it->second );
+            return t;
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        template <class T>
+            void SetProperty( const std::string& sPropertyName,
+                              T tDesiredValue ) {
+            m_mPropertyMap[ sPropertyName ] = ValToStr( tDesiredValue );
+        }
+        
+        ////////////////////////////////////////////////////////////////////////
+        template<class T>
+        friend void output( T& oStream, const PropertyMap& prop ) {
+            std::map<std::string,std::string>::const_iterator it;
+            for( it = prop.m_mPropertyMap.begin(); it != prop.m_mPropertyMap.end(); it++ ){
+                oStream << it->first << it->second;
+            }            
+        }
+        
+        ////////////////////////////////////////////////////////////////////////
+        friend std::ostream& operator<<( std::ostream& oStream, const PropertyMap& prop ) {
+            std::map<std::string,std::string>::const_iterator it;
+            for( it = prop.m_mPropertyMap.begin(); it != prop.m_mPropertyMap.end(); it++ ){
+                oStream << it->first << it->second;
+            }            
+            return oStream;
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        void PrintPropertyMap() { output( std::cout, *this ); }
+
+    private:
+        ////////////////////////////////////////////////////////////////////////
+        template <class T>
+            void StrToVal( T& t, const std::string& sValue ) {
+            std::istringstream iss( sValue );
+            iss >> t;
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        template <class T>
+            std::string ValToStr( const T& t ) {
+            std::ostringstream oss;
+            oss << t;
+            return oss.str();
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // Specialization for double for maximum precision 
+        std::string ValToStr( const double& val ) {
+            std::ostringstream oss;
+            oss.precision( std::numeric_limits<double>::digits10 );
+            oss << val;
+            return oss.str();
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // Specialization for float for maximum precision
+        std::string ValToStr( const float& val ) {
+            std::ostringstream oss;
+            oss.precision( std::numeric_limits<float>::digits10 );
+            oss << val;
+            return oss.str();
+        }
+
+        std::map<std::string,std::string>   m_mPropertyMap;
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    typedef struct _Image Image;
 
     ////////////////////////////////////////////////////////////////////////////
     inline bool imwrite( const std::string& sImageFileName,     ///<Input: image file name
                          const std::string& sExtraInfoFileName, ///<Input: text containing extra info (e.g. camera time, sensor ID,...)
                          const Image& image );
 
-
     ////////////////////////////////////////////////////////////////////////////
     inline bool imwrite( const std::string& sImageFileName,    ///<Input: image file name
-                         const Image& image );
+                         const Image& image,
+                         bool bWriteExtraInfo = true );
     
     ////////////////////////////////////////////////////////////////////////////
     inline Image imread( const std::string& sImageFileName, 
-                         const std::string& sExtraInfoFileName = "",
-                         int nFlags = 1 //<Input: same flag convention as in OpenCV (>0 colour, 0 greyscale, <0 as is)
+                         const std::string& sExtraInfoFileName,
+                         int nFlags = -1 //<Input: same flag convention as in OpenCV (>0 colour, 0 greyscale, <0 as is)
+                         );
+
+    ////////////////////////////////////////////////////////////////////////////
+    inline Image imread( const std::string& sImageFileName, 
+                         bool bReadExtraInfo = true,
+                         int nFlags = -1 //<Input: same flag convention as in OpenCV (>0 colour, 0 greyscale, <0 as is)
                          );
 
     ////////////////////////////////////////////////////////////////////////////
     inline Image FromIplImage( const IplImage* pImage, bool bClone = true );
+
+    ////////////////////////////////////////////////////////////////////////////
+    typedef struct _Image {
+        cv::Mat Image; // OpenCV image
+        PropertyMap Map;
+
+        int width() { return Image.cols; }
+        int height() { return Image.rows; }
+        int widthStep() { return static_cast<int>( Image.step ); }
+        struct _Image clone() { struct _Image ret = *this; this->Image = ret.Image.clone(); return *this; }
+        bool empty() { return Image.data == NULL; }
+
+        /// Write an image to sImageName and the property map to sExtraInfoName.
+        /// No checks are made for overwriting.
+        inline bool write( const std::string& sImageName, 
+                           const std::string& sExtraInfoName ) {
+            return imwrite( sImageName, sExtraInfoName, *this );
+        }
+
+        /// If bWriteExtraInfo is set to true, this call will automatically deduce the 
+        /// sExtraInfoName from the sImageName by replacing the
+        /// extension by ".txt" (if not extension is found, ".txt" will be
+        /// appended). No checks are made for overwriting.
+        inline bool write( const std::string& sImageName, bool bWriteExtraInfo = true ) {
+            return imwrite( sImageName, bWriteExtraInfo, Image );
+        }
+
+        /// Read an image from sImageName and the property map from sExtraInfoName.
+        /// nFlags can be used to automatically load in color or image (or keep as such - default).
+        inline void read( const std::string& sImageFileName, 
+                          const std::string& sExtraInfoFileName,
+                          int nFlags = -1 ) {
+            *this = imread( sImageFileName, sExtraInfoFileName, nFlags );
+        }
+
+        /// Read an image from sImageName and the property map from sExtraInfoName.
+        /// If bReadExtraInfo is set to true, this call will automatically deduce the 
+        /// sExtraInfoName from the sImageName by replacing the
+        /// extension by ".txt" (if not extension is found, ".txt" will be
+        /// appended).
+        /// nFlags can be used to automatically load in color or image (or keep as such - default).
+        inline void read( const std::string& sImageFileName, 
+                          bool bReadExtraInfo = true,
+                          int nFlags = -1 //<Input: same flag convention as in OpenCV (>0 colour, 0 greyscale, <0 as is)
+                          ) {
+            *this = imread( sImageFileName, bReadExtraInfo, nFlags );
+        }
+    } Image;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 inline bool ImageWrapper::imwrite( const std::string& sImageFileName,    
                                    const std::string& sExtraInfoFileName,
                                    const Image& image ) {
-    bool bSuccess = cv::imwrite( sImageFileName.c_str(), image.mImage );
+    bool bSuccess = cv::imwrite( sImageFileName.c_str(), image.Image );
     //std::cerr << "Saving " << sImageFileName << " and " << sExtraInfoFileName << std::endl;
     if( sExtraInfoFileName != "" ) {
         cv::FileStorage oFile( sExtraInfoFileName.c_str(), cv::FileStorage::WRITE );
-        oFile << "SystemTime" << image.dSystemTime;
-        oFile << "CameraTime" << image.dCameraTime;
-        oFile << "SensorID"   << image.sSensorID;
+        if( !oFile.isOpened() ) { return false; }
+        output( oFile, image.Map );
     }
     return bSuccess;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 inline bool ImageWrapper::imwrite( const std::string& sImageFileName,  
-                                   const Image& image ) {
-    return imwrite( sImageFileName, "", image );
+                                   const Image& image,
+                                   bool bWriteExtraInfo ) {
+    std::string sExtraInfoName = "";
+    if( bWriteExtraInfo ) {
+        sExtraInfoName = sImageFileName;
+        sExtraInfoName.erase( sExtraInfoName.rfind( '.' ) );
+        sExtraInfoName += ".txt";
+    }
+    return imwrite( sImageFileName, sExtraInfoName, image );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 inline ImageWrapper::Image ImageWrapper::imread( const std::string& sImageFileName, 
-                                          const std::string& sExtraInfoFileName,
-                                          int nFlags
-                                          ) {
+                                                 const std::string& sExtraInfoFileName,
+                                                 int nFlags
+                                                 ) {
     Image retImage;
-    retImage.mImage = cv::imread( sImageFileName.c_str(), nFlags );
+    retImage.Image = cv::imread( sImageFileName.c_str(), nFlags );
     if( sExtraInfoFileName != "" ) {
         cv::FileStorage oFile( sExtraInfoFileName.c_str(), cv::FileStorage::READ );
-        retImage.dSystemTime = (double)oFile[ "SystemTime" ];
-        retImage.dCameraTime = (double)oFile[ "CameraTime" ];
-        retImage.sSensorID   = (std::string)oFile[ "SensorID" ];
+
+        cv::FileNode r = oFile.root();
+        cv::FileNodeIterator it_r_b = r.begin();
+        cv::FileNodeIterator it_r_e = r.end();
+
+        for( ; it_r_b != it_r_e; it_r_b++ ) {
+            cv::FileNode fnode = *it_r_b;
+            for( cv::FileNodeIterator it = fnode.begin(); it != fnode.end(); it++ ) {
+                //std::cout << (*it).name() << std::endl;
+                //std::cout << (std::string)oFile[ (*it).name() ] << std::endl;
+                retImage.Map.SetProperty( (*it).name(), 
+                                          (std::string)oFile[ (*it).name() ] );
+            }
+        }
     }
     return retImage;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+inline ImageWrapper::Image ImageWrapper::imread
+( const std::string& sImageFileName, bool bReadExtraInfo, int nFlags
+  ) {
+    std::string sExtraInfoName = "";
+    if( bReadExtraInfo ) {
+        sExtraInfoName = sImageFileName;
+        sExtraInfoName.erase( sExtraInfoName.rfind( '.' ) );
+        sExtraInfoName += ".txt";
+    }
+    return imread( sImageFileName, sExtraInfoName, nFlags );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 inline ImageWrapper::Image ImageWrapper::FromIplImage( const IplImage* pImage, bool bClone ) {
     Image retImage;
     if( bClone ) {
-        retImage.mImage = cv::cvarrToMat( pImage ).clone();
+        retImage.Image = cv::cvarrToMat( pImage ).clone();
     }
     else {
-        retImage.mImage = cv::cvarrToMat( pImage );
+        retImage.Image = cv::cvarrToMat( pImage );
     }
+#if 0
     retImage.dSystemTime = 0;
     retImage.dCameraTime = 0;
     retImage.sSensorID   = "";
+#endif
     return retImage;
 }
 

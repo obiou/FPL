@@ -175,12 +175,12 @@ bool CCameraSensor::UEyeCamera::open() {
     }
 
     // Allocate image holder
-    m_ReadImageHolder.mImage = cv::Mat( m_nImageHeight, m_nImageWidth, CV_8UC1, 
-                                        (new unsigned char[m_nImageHeight*m_nImageWidthStep] ),
-                                        m_nImageWidthStep );
-    m_ReadImageHolder.dCameraTime = 0;
-    m_ReadImageHolder.dSystemTime = 0;
-    m_ReadImageHolder.sSensorID = m_sSensorID;
+    m_ReadImageHolder.Image = cv::Mat( m_nImageHeight, m_nImageWidth, CV_8UC1, 
+                                       (new unsigned char[m_nImageHeight*m_nImageWidthStep] ),
+                                       m_nImageWidthStep );
+    m_ReadImageHolder.Map.SetProperty( "CameraTime", 0 );
+    m_ReadImageHolder.Map.SetProperty( "SystemTime", 0 );
+    m_ReadImageHolder.Map.SetProperty( "SensorID", m_sSensorID );
     return true;
 }
 
@@ -268,14 +268,18 @@ bool CCameraSensor::UEyeCamera::read( std::vector<ImageWrapper::Image>& vImages 
 
     // Associate last
     // Best time but this is camera time... 
-    m_ReadImageHolder.dCameraTime = static_cast<double>( ImageInfo.u64TimestampDevice/10 );
+    m_ReadImageHolder.Map.SetProperty( "CameraTime",
+                                       static_cast<double>
+                                       ( ImageInfo.u64TimestampDevice/10 ) );
     // Not very good time ~1ms precision
-    m_ReadImageHolder.dSystemTime = static_cast<double>( ImageInfo.TimestampSystem.wMilliseconds );
-    m_ReadImageHolder.sSensorID = m_sSensorID;
+    m_ReadImageHolder.Map.SetProperty( "SystemTime",
+                                      static_cast<double>
+                                      ( ImageInfo.TimestampSystem.wMilliseconds ) );
+    m_ReadImageHolder.Map.SetProperty( "SensorID", m_sSensorID );
 
-    m_ReadImageHolder.mImage = cv::Mat( m_nImageHeight, m_nImageWidth,
-                                        CV_8UC1, (unsigned char*)pLast,
-                                        m_nImageWidthStep ).clone();
+    m_ReadImageHolder.Image = cv::Mat( m_nImageHeight, m_nImageWidth,
+                                       CV_8UC1, (unsigned char*)pLast,
+                                       m_nImageWidthStep ).clone();
     vImages.clear();
     vImages.push_back( m_ReadImageHolder );
 
