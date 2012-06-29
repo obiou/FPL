@@ -165,7 +165,7 @@ void CCameraModel::compute_update( const std::vector<Eigen::Matrix3d>& vR,
         Eigen::MatrixXd vE = mP2D - vImagePoints[ii];        
         for( size_t nPI = 0; nPI<(unsigned int)nNumPoints; nPI++ ) {
             // Ignore NaN observations (unseen grid points)
-            if( isnan(vImagePoints[ii].col(nPI)(0)) || isnan(vImagePoints[ii].col(nPI)(1)) ) {
+            if( std::isnan(vImagePoints[ii].col(nPI)(0)) || std::isnan(vImagePoints[ii].col(nPI)(1)) ) {
                 vE.col(nPI) << 0 , 0;
             }else{
                 Eigen::MatrixXd mdP2DEPart = mdP2DE.block(0,nNumPoseParams*nPI,2,nNumPoseParams);
