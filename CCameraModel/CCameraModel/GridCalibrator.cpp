@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-//////////////////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////////////////
 bool CCameraModel::compute_extrinsics( const CameraModel& cameraModel,
                                        const Eigen::MatrixXd& mP3D,
                                        const Eigen::MatrixXd& mP2D,
@@ -26,6 +26,28 @@ bool CCameraModel::compute_extrinsics( const CameraModel& cameraModel,
     // Compute homography
     mP3DEstNorm = CEIGEN::metric( mP3DEst );
     Eigen::Matrix3d mH = CGEOM::ComputeHomography( mP3D, mP3DEstNorm );
+    CEIGEN::HToSE3( mH, mR, mt );
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////// 
+bool CCameraModel::compute_extrinsics( const CameraModel& cameraModel,
+                                       const Eigen::MatrixXd& mP3D,
+                                       const Eigen::MatrixXd& mP2D,
+                                       const std::vector<short int>& vInlierIndeces,
+                                       Eigen::Matrix3d& mR,
+                                       Eigen::Vector3d& mt) {
+    // Lift image points
+    Eigen::MatrixXd mP3DEst( 3, mP3D.cols() );
+    Eigen::MatrixXd mP3DEstNorm( 2, mP3D.cols());
+    if( !cameraModel.lift( mP2D, mP3DEst ) ) {
+        std::cout << "Lifting failed." << std::endl;
+        CCameraModel::print_values( cameraModel );
+        return false;
+    }
+    // Compute homography
+    mP3DEstNorm = CEIGEN::metric( mP3DEst );
+    Eigen::Matrix3d mH = CGEOM::ComputeHomography( mP3D, mP3DEstNorm, vInlierIndeces );
     CEIGEN::HToSE3( mH, mR, mt );
     return true;
 }
@@ -142,19 +164,24 @@ void CCameraModel::compute_update( const std::vector<Eigen::Matrix3d>& vR,
                                    mdP2DE, mdP2DI );
         Eigen::MatrixXd vE = mP2D - vImagePoints[ii];        
         for( size_t nPI = 0; nPI<(unsigned int)nNumPoints; nPI++ ) {
-            Eigen::MatrixXd mdP2DEPart = mdP2DE.block(0,nNumPoseParams*nPI,2,nNumPoseParams);
-            Eigen::MatrixXd mdP2DIPart = mdP2DI.block(0,nNumCamParams*nPI,2,nNumCamParams);
-            mJtJ.block( nPoseIndex,      nPoseIndex,      nNumPoseParams, nNumPoseParams ) += 
-                mdP2DEPart.transpose() * mdP2DEPart;
-            mJtJ.block( nPoseIndex,      nCamParamsIndex, nNumPoseParams, nNumCamParams )  += 
-                mdP2DEPart.transpose() * mdP2DIPart;
-            mJtJ.block( nCamParamsIndex, nPoseIndex,      nNumCamParams,  nNumPoseParams )  += 
-                mdP2DIPart.transpose() * mdP2DEPart;
-            mJtJ.block( nCamParamsIndex, nCamParamsIndex, nNumCamParams, nNumCamParams )   += 
-                mdP2DIPart.transpose() * mdP2DIPart;
+            // Ignore NaN observations (unseen grid points)
+            if( std::isnan(vImagePoints[ii].col(nPI)(0)) || std::isnan(vImagePoints[ii].col(nPI)(1)) ) {
+                vE.col(nPI) << 0 , 0;
+            }else{
+                Eigen::MatrixXd mdP2DEPart = mdP2DE.block(0,nNumPoseParams*nPI,2,nNumPoseParams);
+                Eigen::MatrixXd mdP2DIPart = mdP2DI.block(0,nNumCamParams*nPI,2,nNumCamParams);
+                mJtJ.block( nPoseIndex,      nPoseIndex,      nNumPoseParams, nNumPoseParams ) +=
+                    mdP2DEPart.transpose() * mdP2DEPart;
+                mJtJ.block( nPoseIndex,      nCamParamsIndex, nNumPoseParams, nNumCamParams )  +=
+                    mdP2DEPart.transpose() * mdP2DIPart;
+                mJtJ.block( nCamParamsIndex, nPoseIndex,      nNumCamParams,  nNumPoseParams )  +=
+                    mdP2DIPart.transpose() * mdP2DEPart;
+                mJtJ.block( nCamParamsIndex, nCamParamsIndex, nNumCamParams, nNumCamParams )   +=
+                    mdP2DIPart.transpose() * mdP2DIPart;
 
-            mJte.segment(nPoseIndex,nNumPoseParams) += mdP2DEPart.transpose() * vE.block(0,nPI,2,1);
-            mJte.segment(nCamParamsIndex,nNumCamParams) += mdP2DIPart.transpose() * vE.block(0,nPI,2,1);
+                mJte.segment(nPoseIndex,nNumPoseParams) += mdP2DEPart.transpose() * vE.block(0,nPI,2,1);
+                mJte.segment(nCamParamsIndex,nNumCamParams) += mdP2DIPart.transpose() * vE.block(0,nPI,2,1);
+            }
         }
         dSumSqErrors += vE.squaredNorm();
     }
@@ -218,8 +245,26 @@ void CCameraModel::print_values( const CameraModel& cameraModel ) {
     }
 }
 
-//////////////////////////////////////////////////////////////////////////////// 
-//////////////////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+CCameraModel::GridCalibrator::GridCalibrator( const std::string& sCameraType,
+                                              const unsigned int nImageWidth,
+                                              const unsigned int nImageHeight,
+                                              Eigen::MatrixXd& pattern
+                                              ) :
+    m_nImageWidth( nImageWidth ), m_nImageHeight( nImageHeight )
+{
+    m_mGrid = pattern;
+    CameraModel* pCameraModel = new CameraModel( sCameraType );
+    if( pCameraModel != NULL ) {
+        m_CameraModel = *pCameraModel;
+        m_CameraModel.initialise_parameters( nImageWidth, nImageHeight );
+    }
+}
+
+
 //////////////////////////////////////////////////////////////////////////////// 
 CCameraModel::GridCalibrator::GridCalibrator( const std::string& sCameraType,
                                               const unsigned int nImageWidth,
@@ -250,6 +295,30 @@ void CCameraModel::GridCalibrator::add_view( const Eigen::MatrixXd& mP2D ) {
         m_CameraModel.initialise_parameters( m_nImageWidth, m_nImageHeight );
         if( !compute_extrinsics( m_CameraModel, m_mGrid, m_vImagePoints.back(),
                                  mR, mt ) ) {
+            mR = Eigen::Matrix3d::Identity();
+            mt = Eigen::Vector3d::Zero();
+            mt(2,0) = 1;
+        }
+    }
+    m_vR.push_back( mR );
+    m_vt.push_back( mt );
+}
+
+////////////////////////////////////////////////////////////////////////
+/// Add a new view with a set of 2D measurements
+/// (internally the extrinsic will be initialised)
+void CCameraModel::GridCalibrator::add_view( const Eigen::MatrixXd& mP2D,
+                                             const std::vector<short int>& vInlierIndeces
+                                             ) {
+    m_vImagePoints.push_back( mP2D );
+
+    Eigen::Matrix3d mR;
+    Eigen::Vector3d mt;
+    if( !compute_extrinsics( m_CameraModel, m_mGrid, m_vImagePoints.back(),
+                             vInlierIndeces, mR, mt ) ) {
+        m_CameraModel.initialise_parameters( m_nImageWidth, m_nImageHeight );
+        if( !compute_extrinsics( m_CameraModel, m_mGrid, m_vImagePoints.back(),
+                                 vInlierIndeces, mR, mt ) ) {
             mR = Eigen::Matrix3d::Identity();
             mt = Eigen::Vector3d::Zero();
             mt(2,0) = 1;

@@ -16,6 +16,15 @@ namespace CCameraModel {
 
     ////////////////////////////////////////////////////////////////////////////////
     /// Compute extrinsics
+    bool compute_extrinsics( const CameraModel& cameraModel,
+                             const Eigen::MatrixXd& mP3D,
+                             const Eigen::MatrixXd& mP2D,
+                             const std::vector<short int>& vInlierIndeces,
+                             Eigen::Matrix3d& mR,
+                             Eigen::Vector3d& mt);
+
+    ////////////////////////////////////////////////////////////////////////////////
+    /// Compute extrinsics
     bool compute_extrinsics_non_lin
         ( const CameraModel& cameraModel,
           const Eigen::MatrixXd& mP3D,
@@ -69,6 +78,15 @@ namespace CCameraModel {
     ////////////////////////////////////////////////////////////////////////////////
     class GridCalibrator {
     public:
+
+        GridCalibrator(
+                        const std::string& sCameraType,
+                        const unsigned int nImageWidth,
+                        const unsigned int nImageHeight,
+                        Eigen::MatrixXd& pattern
+                        );
+
+        ////////////////////////////////////////////////////////////////////////
         GridCalibrator( const std::string& sCameraType,
                         const unsigned int nImageWidth,
                         const unsigned int nImageHeight,
@@ -80,6 +98,13 @@ namespace CCameraModel {
         /// Add a new view with a set of 2D measurements
         /// (internally the extrinsic will be initialised)
         void add_view( const Eigen::MatrixXd& mP2D );
+
+        ////////////////////////////////////////////////////////////////////////
+        /// Add a new view with a set of 2D measurements
+        /// (internally the extrinsic will be initialised)
+        void add_view( const Eigen::MatrixXd& mP2D,
+                       const std::vector<short int>& vInlierIndeces
+                       );
 
         ////////////////////////////////////////////////////////////////////////
         /// Make one full update step.
