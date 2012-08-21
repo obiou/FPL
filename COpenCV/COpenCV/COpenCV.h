@@ -787,6 +787,7 @@ namespace COPENCV {
                     m_OpenCVConsole.CursorKillEnd();
                 }
                 else if( isalnum( (char)nKey ) || 
+                         (char)nKey == '-' || 
                          (char)nKey == '.' || 
                          (char)nKey == ' ' || 
                          (char)nKey == '=' || 
