@@ -15,7 +15,7 @@ SET( SRCS
 ##############################################################################
 SET( HDRS 
   Homography.h
-  Jacobian.h
+  Jacobians.h
   Masks.h
   TrackingFunctors.h
   Transforms.h
