@@ -855,7 +855,7 @@ void CTrack::Gradient( unsigned char* pImage,  ///< Input:
     pRowX[0] = pRow[1] - pRow[0];
     pRowY[0] = pBottomRow[0] - pRow[0]; 
     for( int nCol = 1; nCol < nImageWidthM1; ++nCol ) {
-        pRowX[nCol] = (pRow[nCol+1] - pRow[nCol-1])/2;
+        pRowX[nCol] = (pRow[nCol+1] - pRow[nCol-1])/2.;
         pRowY[nCol] = pBottomRow[nCol] - pRow[nCol];
     }
     pRowX[nImageWidthM1] = pRow[nImageWidthM1] - pRow[nImageWidthM1-1];
@@ -871,16 +871,16 @@ void CTrack::Gradient( unsigned char* pImage,  ///< Input:
     for( int nRow = 1; nRow < nImageHeightM1; ++nRow ) {
         // First column
         *pRowX++ = pRow[1] - pRow[0];
-        *pRowY++ = (pBottomRow[0] - pTopRow[0])/2;
+        *pRowY++ = (pBottomRow[0] - pTopRow[0])/2.;
     
         for( int nCol = 1; nCol < nImageWidthM1; ++nCol ) {
-            *pRowX++ = (pRow[nCol+1] - pRow[nCol-1])/2;      
-            *pRowY++ = (pBottomRow[nCol] - pTopRow[nCol])/2;
+            *pRowX++ = (pRow[nCol+1] - pRow[nCol-1])/2.;      
+            *pRowY++ = (pBottomRow[nCol] - pTopRow[nCol])/2.;
         }
 
         // Last column
         *pRowX++ = pRow[nImageWidthM1] - pRow[nImageWidthM1-1];
-        *pRowY++ = (pBottomRow[nImageWidthM1] - pTopRow[nImageWidthM1])/2;
+        *pRowY++ = (pBottomRow[nImageWidthM1] - pTopRow[nImageWidthM1])/2.;
 
         // Move to next rows
         pRow       += nImageWidthStep; 
@@ -897,7 +897,7 @@ void CTrack::Gradient( unsigned char* pImage,  ///< Input:
     pRowY[0] = pRow[0] - pTopRow[0];
   
     for( int nCol = 1; nCol < nImageWidthM1; ++nCol ) {
-        pRowX[nCol] = (pRow[nCol+1] - pRow[nCol-1])/2;
+        pRowX[nCol] = (pRow[nCol+1] - pRow[nCol-1])/2.;
         pRowY[nCol] = pRow[nCol] - pTopRow[nCol];
     }
     pRowX[nImageWidthM1] = pRow[nImageWidthM1] - pRow[nImageWidthM1-1];
