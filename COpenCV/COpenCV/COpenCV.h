@@ -687,6 +687,17 @@ namespace COPENCV {
 
         ////////////////////////////////////////////////////
         template<class T>
+            void plot( const T x, const T y,
+                       const std::string& sOptions,
+                       const int nWidthOffset = 0,
+                       const int nHeightOffset = 0 ) {
+            std::vector<std::pair<T,T> > v; v.push_back( std::pair<T,T>( x, y ) );
+            plot<>( v.begin(), v.end(), pair_reader<T>, 
+                    sOptions, nWidthOffset, nHeightOffset );
+        }
+
+        ////////////////////////////////////////////////////
+        template<class T>
         void plot2( const std::vector<std::pair<T,T> >& vPoints1, 
                     const std::vector<std::pair<T,T> >& vPoints2, 
                     const std::string& sOptions ) {

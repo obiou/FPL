@@ -477,7 +477,7 @@ inline void BilinearInterpolationIllum( const int nWM, const int nHM,
         float fV11 = pImage[nFloorXc+1 + (nFloorYc+1)*nImageWidthStep ];
         
         float fRes = fAlpha*( fV00+fDx*(fV10-fV00)+fDy*(fV01-fV00)-fDy*fDx*((fV01-fV00)+fV10-fV11) ) + fBeta;
-        *pWarpedPatch = fRes > 255.f ? char(255) : (fRes < 0.f ? char(0) : static_cast<char>(fRes));
+        *pWarpedPatch = fRes > 255.f ? (unsigned char)(255) : (fRes < 0.f ? (unsigned char)(0) : static_cast<unsigned char>(fRes));
         //*pWarpedPatchMask = 1;
         maskFctr.set( true );
     } 
